@@ -9,6 +9,7 @@ import json
 import logging
 import re
 import time
+import collections
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
@@ -22,17 +23,57 @@ DATE_FILTER = '("2018"[PDAT] : "2026"[PDAT]) AND english[lang] AND hasabstract'
 BATCH_SIZE = 200
 REQUEST_DELAY = 0.4  # stay under 3 req/sec without an API key
 
-TOPICS = {
-    "readmissions": '"Patient Readmission"[MeSH Terms]',
-    "infections": '"Cross Infection"[MeSH Terms]',
-    "safety": '"Patient Safety"[MeSH Terms]',
-    "mortality": '"Hospital Mortality"[MeSH Terms]',
-    "quality": '"Quality Indicators, Health Care"[MeSH Terms]',
+DROP_REASONS: collections.Counter[str] = collections.Counter()
+
+SUBSTANTIVE_TYPES = {
+    "Journal Article",
+    "Randomized Controlled Trial",
+    "Clinical Trial",
+    "Observational Study",
+    "Systematic Review",
+    "Meta-Analysis",
+    "Multicenter Study",
+    "Comparative Study",
+    "Evaluation Study",
+    "Validation Study",
+    "Case Reports",
+    "Review",
+    "Practice Guideline",
+    "Guideline",
 }
 
-MONTHS = {
-    "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
-    "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12,
+EXCLUDED_TYPES = {
+    "Editorial", "Comment", "News", "Newspaper Article",
+    "Letter", "Biography", "Historical Article", "Interview",
+    "Portrait", "Published Erratum",
+}
+
+TOPICS = {
+    "readmissions": (
+        '("Patient Readmission"[MeSH Terms] OR "patient readmission"[tiab] '
+        'OR "hospital readmission*"[tiab] OR "30-day readmission*"[tiab])',
+        130,
+    ),
+    "infections": (
+        '("Cross Infection"[MeSH Terms] OR "healthcare-associated infection*"[tiab] '
+        'OR "hospital-acquired infection*"[tiab] OR "nosocomial infection*"[tiab])',
+        130,
+    ),
+    "safety": (
+        '("Patient Safety"[MeSH Terms] OR "patient safety"[tiab] '
+        'OR "adverse event*"[ti] OR "medical error*"[tiab])',
+        160,
+    ),
+    "mortality": (
+        '("Hospital Mortality"[MeSH Terms] OR "in-hospital mortality"[tiab] '
+        'OR "inpatient mortality"[tiab] OR "hospital mortality"[tiab])',
+        125,
+    ),
+    "quality": (
+        '("Quality Indicators, Health Care"[MeSH Terms] OR "quality indicator*"[ti] '
+        'OR "quality measure*"[ti] OR "performance measure*"[ti])',
+        130,
+    ),
 }
 
 
@@ -54,7 +95,7 @@ def _post(path: str, data: dict) -> httpx.Response:
     return r
 
 
-def search(term: str, retmax: int = 120) -> list[str]:
+def search(term: str, retmax: int) -> list[str]:
     """Return PMIDs for a MeSH term, relevance-ranked."""
     r = _get("esearch.fcgi", {
         "db": "pubmed",
@@ -135,22 +176,32 @@ def parse_abstract(article: ET.Element) -> str | None:
     return joined or None
 
 
-def parse_article(pa: ET.Element) -> dict | None:
-    """Parse one <PubmedArticle> into a record dict. Returns None if unusable."""
+def parse_article(pa: ET.Element) -> tuple[dict | None, str | None]:
+    """Parse one <PubmedArticle>. Returns (record, None) or (None, drop_reason)."""
     pmid_el = pa.find(".//MedlineCitation/PMID")
     if pmid_el is None or not pmid_el.text:
-        return None
+        return None, "no_pmid"
     pmid = pmid_el.text.strip()
 
     abstract = parse_abstract(pa)
     if not abstract:
         log.debug("pmid %s has no abstract, skipping", pmid)
-        return None
+        return None, "no_abstract"
 
     if len(abstract.split()) < 30:
         log.debug("pmid %s abstract too short (%d words), skipping",
                   pmid, len(abstract.split()))
-        return None
+        return None, "abstract_too_short"
+
+    pub_types = [
+        p.text.strip()
+        for p in pa.findall(".//PublicationTypeList/PublicationType")
+        if p.text
+    ]
+
+    if EXCLUDED_TYPES & set(pub_types) and not (SUBSTANTIVE_TYPES & set(pub_types)):
+        log.debug("pmid %s excluded by publication type %s", pmid, pub_types)
+        return None, "excluded_publication_type"
 
     title = _text(pa.find(".//Article/ArticleTitle"))
     journal = _text(pa.find(".//Journal/Title"))
@@ -165,12 +216,6 @@ def parse_article(pa: ET.Element) -> dict | None:
         d.text.strip()
         for d in pa.findall(".//MeshHeadingList/MeshHeading/DescriptorName")
         if d.text
-    ]
-
-    pub_types = [
-        p.text.strip()
-        for p in pa.findall(".//PublicationTypeList/PublicationType")
-        if p.text
     ]
 
     citation = pa.find(".//MedlineCitation")
@@ -188,7 +233,7 @@ def parse_article(pa: ET.Element) -> dict | None:
         "mesh_terms": mesh,
         "publication_types": pub_types,
         "indexing_method": indexing_method,
-    }
+    }, None
 
 
 def parse_batch(xml: str) -> list[dict]:
@@ -196,12 +241,15 @@ def parse_batch(xml: str) -> list[dict]:
     records = []
     for pa in root.findall(".//PubmedArticle"):
         try:
-            rec = parse_article(pa)
+            rec, reason = parse_article(pa)
         except Exception:
+            DROP_REASONS["parse_error"] += 1
             log.exception("failed to parse an article, skipping")
             continue
         if rec:
             records.append(rec)
+        else:
+            DROP_REASONS[reason] += 1
     return records
 
 
@@ -209,12 +257,13 @@ def parse_batch(xml: str) -> list[dict]:
 # Orchestration
 # --------------------------------------------------------------------------
 
-def collect(per_topic: int = 120) -> list[dict]:
+def collect() -> list[dict]:
     """Search all topics, fetch records, merge topic labels across duplicates."""
+    DROP_REASONS.clear()
     pmid_topics: dict[str, set[str]] = {}
 
-    for topic, term in TOPICS.items():
-        pmids = search(term, retmax=per_topic)
+    for topic, (term, retmax) in TOPICS.items():
+        pmids = search(term, retmax=retmax)
         log.info("%s: %d pmids", topic, len(pmids))
         for pmid in pmids:
             pmid_topics.setdefault(pmid, set()).add(topic)
@@ -233,6 +282,11 @@ def collect(per_topic: int = 120) -> list[dict]:
         log.info("fetching %d-%d", i, i + len(batch))
         records.extend(parse_batch(fetch_xml(batch)))
         time.sleep(REQUEST_DELAY)
+
+    if DROP_REASONS:
+        log.info("dropped %d records:", sum(DROP_REASONS.values()))
+        for reason, n in DROP_REASONS.most_common():
+            log.info("  %-28s %d", reason, n)
 
     for rec in records:
         rec["topics"] = sorted(pmid_topics[rec["doc_id"]])
