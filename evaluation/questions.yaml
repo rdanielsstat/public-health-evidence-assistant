@@ -1,0 +1,233 @@
+# Evaluation question set for the Public Health Evidence Assistant.
+#
+# Fields:
+#   id             stable identifier, referenced by qrels.jsonl and result tables
+#   question       the query text sent to the retrieval pipeline
+#   category       what this question is meant to exercise
+#   topics         corpus slices dense retrieval actually draws from, measured by
+#                  pooling the top 10 hits per question (see note below)
+#   topics_intent  for multi-part questions, the slices the question was designed
+#                  to require; recorded only where it differs from `topics`
+#   note           optional; why this question is in the set
+#
+# On `topics` vs `topics_intent`
+# ------------------------------
+# `topics` was initially assigned by hand, then corrected against measured
+# retrieval behaviour. For single-topic questions the two agreed. For the
+# multi-part questions (q14-q20) they did not: dense retrieval collapses each
+# question onto whichever slice dominates its phrasing, returning 10 of 10 hits
+# from a single slice even where the question explicitly names two outcomes.
+#
+# That collapse is recorded rather than corrected away. It is the measured
+# motivation for query decomposition in the agent layer: a question naming two
+# outcomes needs to be split, retrieved against separately, and synthesised.
+# `topics_intent` is the target for that decomposition; `topics` is the
+# single-vector baseline it has to beat.
+#
+# Categories:
+#   single_topic_factual   answerable from one topic slice, common subject matter
+#   single_topic_specific  answerable from one slice but requires precision
+#   cross_topic            designed to require more than one slice
+#   policy                 tests the policy/evidence boundary
+#   temporal               tests whether recent work is retrievable
+#   out_of_scope           corpus should not answer these; graceful failure expected
+
+# ---------------------------------------------------------------------------
+# Single-topic, factual
+# ---------------------------------------------------------------------------
+
+- id: q01
+  question: What interventions reduce 30-day readmissions for heart failure patients?
+  category: single_topic_factual
+  topics: [readmissions]
+
+- id: q02
+  question: Which hand hygiene interventions improve compliance in hospital settings?
+  category: single_topic_factual
+  topics: [infections]
+
+- id: q02b
+  question: What is known about hand hygiene compliance rates in hospital settings?
+  category: single_topic_factual
+  topics: [infections]
+  note: >
+    Rewritten twin of q02. The corpus contains descriptive and review literature
+    on hand hygiene compliance but no intervention trials, so q02 as originally
+    phrased ("which interventions improve compliance") returns no highly
+    relevant documents. This variant asks what the corpus can actually answer,
+    so it contributes to retrieval-method comparison; q02 is retained to test
+    whether the system partially answers gracefully rather than confabulating.
+
+- id: q03
+  question: What are the most common healthcare-associated infections in ICU patients?
+  category: single_topic_factual
+  topics: [infections]
+
+- id: q04
+  question: What factors predict in-hospital mortality in sepsis?
+  category: single_topic_factual
+  topics: [mortality]
+  note: >
+    Conceptually spans infection and mortality, but the answering documents all
+    arrived under the mortality query. Retrieval returns 8/10 mortality with
+    single hits from readmissions and infections at the tail.
+
+- id: q05
+  question: How effective are discharge follow-up phone calls at reducing readmissions?
+  category: single_topic_factual
+  topics: [readmissions]
+
+- id: q06
+  question: What is the evidence for chlorhexidine bathing in preventing healthcare-associated infections?
+  category: single_topic_factual
+  topics: [infections]
+
+# ---------------------------------------------------------------------------
+# Single-topic, specific
+# ---------------------------------------------------------------------------
+
+- id: q07
+  question: What is the reported effect size of medication reconciliation on readmission rates?
+  category: single_topic_specific
+  topics: [readmissions]
+  note: Tests whether the system reports quantitative findings or hedges.
+
+- id: q08
+  question: Which patient safety interventions have been evaluated in pediatric settings?
+  category: single_topic_specific
+  topics: [safety]
+
+- id: q09
+  question: What quality indicators have been developed for stroke care?
+  category: single_topic_specific
+  topics: [quality]
+
+- id: q10
+  question: How does nurse staffing relate to inpatient mortality?
+  category: single_topic_specific
+  topics: [mortality, safety]
+  note: >
+    One of the few questions where retrieval genuinely spreads across slices
+    (7 mortality, 2 safety, 1 readmissions) without being explicitly two-part.
+
+- id: q11
+  question: What predicts readmission after colorectal surgery?
+  category: single_topic_specific
+  topics: [readmissions]
+
+# ---------------------------------------------------------------------------
+# Exact-term and acronym retrieval
+# ---------------------------------------------------------------------------
+
+- id: q12
+  question: What is the incidence of CLABSI in adult intensive care units?
+  category: single_topic_specific
+  topics: [infections]
+  note: Acronym query. Lexical retrieval is expected to compete well here.
+
+- id: q13
+  question: What do surveillance data show about CAUTI trends in acute care hospitals?
+  category: single_topic_specific
+  topics: [infections]
+  note: Acronym plus proper-noun-adjacent phrasing.
+
+# ---------------------------------------------------------------------------
+# Cross-topic synthesis
+# ---------------------------------------------------------------------------
+
+- id: q14
+  question: Which discharge interventions reduce both readmissions and post-discharge mortality?
+  category: cross_topic
+  topics: [readmissions]
+  topics_intent: [readmissions, mortality]
+  note: >
+    Collapses entirely onto readmissions (10/10). The mortality half of the
+    question is never retrieved against.
+
+- id: q15
+  question: How do healthcare-associated infections affect hospital mortality rates?
+  category: cross_topic
+  topics: [infections]
+  topics_intent: [infections, mortality]
+  note: Collapses onto infections (9/10, 1 readmissions).
+
+- id: q16
+  question: Are hospitals that perform well on readmission measures also better on patient safety measures?
+  category: cross_topic
+  topics: [readmissions]
+  topics_intent: [readmissions, safety, quality]
+  note: >
+    Collapses entirely onto readmissions (10/10) despite naming safety measures
+    explicitly.
+
+- id: q17
+  question: What is the relationship between quality indicators and actual patient outcomes?
+  category: cross_topic
+  topics: [quality]
+  topics_intent: [quality, mortality, safety]
+  note: >
+    Collapses entirely onto quality (10/10). "Patient outcomes" is too generic
+    to pull the mortality or safety slices.
+
+# ---------------------------------------------------------------------------
+# Policy boundary
+# ---------------------------------------------------------------------------
+
+- id: q18
+  question: What has been the measured impact of the Hospital Readmissions Reduction Program?
+  category: policy
+  topics: [readmissions]
+  topics_intent: [readmissions, quality]
+
+- id: q19
+  question: Do financial penalties for readmissions produce sustained reductions?
+  category: policy
+  topics: [readmissions]
+  topics_intent: [readmissions, quality]
+
+- id: q20
+  question: How do CMS quality measures compare to what the literature identifies as modifiable risk factors?
+  category: policy
+  topics: [quality]
+  topics_intent: [quality, readmissions]
+  note: >
+    Requires the policy corpus, which is not yet ingested. Expected to score
+    poorly until CDC and CMS documents are added; useful as a before/after
+    comparison. Currently retrieves 9/10 quality, 1 readmissions.
+
+# ---------------------------------------------------------------------------
+# Temporal
+# ---------------------------------------------------------------------------
+
+- id: q21
+  question: Has evidence on hand hygiene compliance interventions changed since 2020?
+  category: temporal
+  topics: [infections]
+
+- id: q22
+  question: What effect did the COVID-19 pandemic have on healthcare-associated infection rates?
+  category: temporal
+  topics: [infections]
+
+# ---------------------------------------------------------------------------
+# Out of scope
+# ---------------------------------------------------------------------------
+
+- id: q23
+  question: What is the optimal dosing schedule for vancomycin in MRSA bacteremia?
+  category: out_of_scope
+  topics: []
+  note: >
+    Clinical pharmacology, outside the inpatient quality corpus. Retrieval still
+    returns a full 10 hits (8 infections, 2 mortality) because a top-k retriever
+    has no notion of "nothing relevant" — graceful failure is the generation
+    layer's job, which is what this question tests.
+
+- id: q24
+  question: What are the readmission rates for psychiatric inpatients in the United Kingdom?
+  category: out_of_scope
+  topics: []
+  note: >
+    Specific population and jurisdiction not covered. Retrieval returns 10/10
+    readmissions hits. Tests whether the system distinguishes "no evidence in
+    this corpus" from "no evidence."

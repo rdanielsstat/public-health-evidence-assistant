@@ -40,8 +40,3 @@ CREATE INDEX documents_topics_idx ON documents USING GIN (topics);
 CREATE INDEX documents_mesh_idx ON documents USING GIN (mesh_terms);
 CREATE INDEX documents_year_idx ON documents (published_year);
 CREATE INDEX documents_source_idx ON documents (source);
-
-CREATE INDEX chunk_embeddings_hnsw_idx
-    ON chunk_embeddings
-    USING hnsw (embedding vector_cosine_ops)
-    WITH (m = 16, ef_construction = 64);

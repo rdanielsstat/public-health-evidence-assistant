@@ -181,6 +181,90 @@ questions.
 The chunking layer is retained for policy and guidance documents (CDC, CMS),
 which are substantially longer and do require splitting.
 
+## Retrieval
+
+### Lexical
+
+Postgres full-text search over a generated `tsvector` column with a GIN
+index, ranked by `ts_rank_cd`. Query terms are OR-joined rather than
+AND-joined: `plainto_tsquery` and `websearch_to_tsquery` both produce
+AND-joined queries for bare phrases, which requires every term to appear
+and returned 3 results for a 5-term query against a 646-document corpus.
+Building the tsquery explicitly with `|` separators lets partial matches
+rank rather than filter.
+
+### Dense
+
+pgvector cosine distance over `text-embedding-3-small` at 1536
+dimensions. Embeddings are stored in a separate `chunk_embeddings` table
+keyed by `(chunk_id, model)`, so multiple embedding models can be
+compared without schema changes.
+
+An HNSW index is created on `chunk_embeddings` for cosine distance. At
+the current corpus size the planner correctly ignores it in favour of a
+sequential scan — `EXPLAIN ANALYZE` shows 5.8ms — so it provides no
+benefit today. It is included because it is the correct structure for
+the corpus to grow into, and because the index operator class must match
+the distance operator used at query time (`vector_cosine_ops` with
+`<=>`); a mismatch silently disables the index.
+
+### Evaluation design
+
+Pipeline variants are scored on an identical question set:
+
+| Variant | Retrieval |
+|---|---|
+| `no_retrieval` | none — LLM answers from parametric knowledge |
+| `lexical_only` | Postgres full-text, `ts_rank_cd` |
+| `dense_only` | pgvector cosine, `text-embedding-3-small` |
+| `hybrid_rrf` | reciprocal rank fusion over both |
+| `hybrid_rerank` | RRF candidates reranked by cross-encoder |
+
+The `no_retrieval` baseline exists because most of this corpus predates
+current model training cutoffs, so an LLM can answer many of these
+questions unaided. Including it tests whether retrieval adds value
+rather than assuming it does. Answer quality and citation validity are
+scored separately: the baseline is expected to produce fluent answers
+with unverifiable references.
+
+### Why a no-retrieval baseline
+
+Most of this corpus predates current model training cutoffs, so a
+language model can produce a fluent answer to most of these questions
+without any retrieval at all. The baseline tests whether the retrieval
+pipeline adds value rather than assuming it does.
+
+On an initial spot check, the ungrounded baseline produced a *more
+comprehensive* answer than the grounded pipeline — seven intervention
+categories against four — and every clinical claim it made was broadly
+accurate. Its citations were another matter. All seven PMIDs it supplied
+were checked against PubMed:
+
+| PMID | Cited as | Actually |
+|---|---|---|
+| 19414673 | Structured education programs, Jaarsma et al. | Phase II immunotoxin trial in hairy cell leukemia |
+| 19139356 | Transitional care review, Jack et al. | Does not resolve |
+| 18467729 | Home health interventions, McAlister et al. | Doxorubicin in pediatric hepatoblastoma |
+| 18467729 | Multidisciplinary care, Coleman et al. | Same paper, cited twice under two attributions |
+| 26700000 | Medication reconciliation, Weir et al. | Rac1 signalling in rat inflammatory pain |
+| 24685312 | Structured follow-up care, Hesselink et al. | Gaucher disease cohort in South Florida |
+| 28167973 | Telehealth meta-analysis, Kitsiou et al. | Caffeic acid and head/neck carcinoma cells |
+
+Zero of seven were correct. Six were valid PubMed identifiers pointing at
+unrelated papers — a more dangerous failure than an invented number,
+since the citation looks checkable and resolves to a real record. One
+identifier does not exist at all. One paper was cited twice under two
+different author attributions.
+
+Answer quality and citation validity are therefore scored as separate
+dimensions in the evaluation. A single quality score would rank the
+ungrounded baseline higher on this question despite its sourcing being
+entirely fabricated.
+
+Citation validity is checked mechanically rather than by an LLM judge:
+PMIDs are extracted from the answer and tested for membership in the
+`documents` table. Only groundedness and completeness require a judge.
+
 ### Example questions
 
 - What interventions reduce 30-day readmissions for heart failure patients?
