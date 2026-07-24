@@ -216,52 +216,63 @@ included because it is the correct structure for the corpus to grow into, and
 because the index operator class must match the distance operator used at query
 time (`vector_cosine_ops` with `<=>`); a mismatch silently disables the index.
 
+### Hybrid search
+
+Lexical and dense retrieval are fused with Reciprocal Rank Fusion (RRF).
+RRF ignores the raw scores from each method, which live on different scales
+(`ts_rank_cd` and cosine distance aren't comparable), and combines only the
+rank positions: each document scores `1 / (k + rank)` per list it appears in,
+summed across lists, with `k = 60`. A document found by both searches collects
+a contribution from each; one found by a single search collects one. Ranks
+start at 1 in this implementation, which is equivalent to the rank-0
+convention up to a constant shift absorbed by `k`.
+
+`search_hybrid()` in `retrieval/fusion.py` shares the signature of the other
+two retrievers, drawing 50 candidates from each before fusing.
+
 ## Evaluation
 
-markdown
 ### Relevance judgments
 
 Retrieval candidates were pooled from both methods (top 10 each, union) and
 graded 0/1/2 by `gpt-4o-mini`. This produced 431 judgments across 24
 questions: 170 not relevant, 183 partially relevant, 78 highly relevant.
 
-Grader calibration was checked against manual judgment on a stratified sample
-of 36 pairs, 12 from each grade:
+Grader calibration was checked against manual judgment on a blind stratified
+sample of 36 pairs, 12 from each grade, with the automated grades withheld:
 
-| Measure                              | Result      |
-| ------------------------------------ | ----------- |
-| Exact agreement                      | 23/36 (64%) |
-| Within one grade                     | 34/36 (94%) |
-| Manual grade stricter than model     | 13          |
-| Manual grade more lenient than model | 0           |
+| Measure                              | Result       |
+| ------------------------------------ | ------------ |
+| Exact agreement                      | 24/36 (67%)  |
+| Within one grade                     | 35/36 (97%)  |
+| Quadratic weighted kappa             | 0.71         |
+| Manual grade stricter than model     | 8            |
+| Manual grade more lenient than model | 4            |
 
-Agreement is complete on grade 0 (12/12) and degrades as relevance increases:
-5 of 12 grade-1 judgments and 8 of 12 grade-2 judgments would have been graded
-lower manually. The disagreement is entirely one-directional, indicating the
-automated grader is systematically more generous than a human judge rather
-than noisy.
+Agreement by grade: 92% on not-relevant, 42% on partially relevant, 67% on
+highly relevant. The middle grade is the least reliable, which is expected —
+partial relevance is the fuzziest boundary — and the least consequential,
+since recall is thresholded at either grade ≥ 1 or grade ≥ 2 and borderline
+cases fall on both sides. Only one pair differed by two grades.
 
-Two caveats bound this. Manual grading used titles only while the grader saw
-full abstracts, so some strictness reflects insufficient information rather
-than genuine disagreement. And the sample is stratified rather than
-representative, so the 64% figure describes agreement within each grade band,
-not across the actual 170/183/78 distribution.
-
-The practical consequence is that absolute recall and NDCG values are
-optimistic. Relative comparisons between retrieval methods are unaffected,
-since the same judgments are applied to every variant.
+An earlier calibration attempt graded from titles alone and produced 64%
+agreement with a strictly one-directional bias: 13 manual downgrades and zero
+upgrades. Repeating the exercise with full abstracts visible eliminated the
+bias (8 down, 4 up), indicating the apparent leniency was an artifact of
+grading with less information than the automated grader had, not a property of
+the grader.
 
 ### Pipeline variants
 
 Variants are scored on an identical question set:
 
-| Variant         | Retrieval                                   |
-| --------------- | ------------------------------------------- |
+| Variant         | Retrieval                                    |
+| --------------- | -------------------------------------------- |
 | `no_retrieval`  | none — LLM answers from parametric knowledge |
-| `lexical_only`  | Postgres full-text, `ts_rank_cd`            |
-| `dense_only`    | pgvector cosine, `text-embedding-3-small`   |
-| `hybrid_rrf`    | reciprocal rank fusion over both            |
-| `hybrid_rerank` | RRF candidates reranked by cross-encoder    |
+| `lexical_only`  | Postgres full-text, `ts_rank_cd`             |
+| `dense_only`    | pgvector cosine, `text-embedding-3-small`    |
+| `hybrid_rrf`    | reciprocal rank fusion over both             |
+| `hybrid_rerank` | RRF candidates reranked by cross-encoder     |
 
 ### The no-retrieval baseline
 
@@ -278,13 +289,13 @@ checked against PubMed:
 
 | PMID     | Cited as                                      | Actually                                          |
 | -------- | --------------------------------------------- | ------------------------------------------------- |
-| 19414673 | Structured education programs, Jaarsma et al. | Phase II immunotoxin trial in hairy cell leukemia  |
-| 19139356 | Transitional care review, Jack et al.         | Does not resolve                                   |
-| 18467729 | Home health interventions, McAlister et al.   | Doxorubicin in pediatric hepatoblastoma            |
-| 18467729 | Multidisciplinary care, Coleman et al.        | Same paper, cited twice under two attributions     |
-| 26700000 | Medication reconciliation, Weir et al.        | Rac1 signalling in rat inflammatory pain           |
-| 24685312 | Structured follow-up care, Hesselink et al.   | Gaucher disease cohort in South Florida            |
-| 28167973 | Telehealth meta-analysis, Kitsiou et al.      | Caffeic acid and head/neck carcinoma cells         |
+| 19414673 | Structured education programs, Jaarsma et al. | Phase II immunotoxin trial in hairy cell leukemia |
+| 19139356 | Transitional care review, Jack et al.         | Does not resolve                                  |
+| 18467729 | Home health interventions, McAlister et al.   | Doxorubicin in pediatric hepatoblastoma           |
+| 18467729 | Multidisciplinary care, Coleman et al.        | Same paper, cited twice under two attributions    |
+| 26700000 | Medication reconciliation, Weir et al.        | Rac1 signalling in rat inflammatory pain          |
+| 24685312 | Structured follow-up care, Hesselink et al.   | Gaucher disease cohort in South Florida           |
+| 28167973 | Telehealth meta-analysis, Kitsiou et al.      | Caffeic acid and head/neck carcinoma cells        |
 
 Zero of seven were correct. Six were valid PubMed identifiers pointing at
 unrelated papers — a more dangerous failure than an invented number, since the
@@ -299,6 +310,36 @@ this question despite its sourcing being entirely fabricated.
 Citation validity is checked mechanically rather than by an LLM judge: PMIDs
 are extracted from the answer and tested for membership in the `documents`
 table. Only groundedness and completeness require a judge.
+
+### Retrieval metrics
+
+Recall@5, Recall@10, MRR, and NDCG@10 for each retriever against the 431
+graded judgments, over the 23 in-scope questions (out-of-scope q23 is
+excluded, having no relevant document to recall). Computed by
+`evaluation/retrieval_metrics.py`.
+
+| retriever  | recall@5 | recall@10 | mrr   | ndcg@10 |
+|------------|----------|-----------|-------|---------|
+| lexical    | 0.219    | 0.417     | 0.774 | 0.479   |
+| dense      | 0.439    | 0.730     | 0.978 | 0.828   |
+| hybrid_rrf | 0.320    | 0.548     | 0.896 | 0.681   |
+
+Dense retrieval is the strongest single method by a wide margin, placing a
+relevant document at rank 1 on nearly every question (0.978 MRR). Equal-weight
+RRF underperforms dense on every metric. The cause is retriever quality
+asymmetry: RRF treats agreement between the two ranked lists as signal, which
+holds when both inputs are independently informative, but here dense is
+near-oracle while lexical has poor mid-rank precision. Documents both
+retrievers surface, even at mediocre ranks, collect two contributions and
+outrank a document dense alone ranks first with high confidence. On the stroke
+quality-indicator question, dense's rank-1 relevant document is pushed out of
+the fused top 10 entirely by lexical's co-occurring lower-value results.
+
+Hybrid search is implemented and evaluated per the rubric; the measured finding
+is that on this corpus it does not improve over the strongest single retriever.
+A stronger lexical ranker (BM25 via a Postgres extension such as
+VectorChord-BM25) would narrow the quality gap and is the natural next step if
+hybrid is to be made competitive; it is noted as future work rather than built.
 
 ## Status
 
