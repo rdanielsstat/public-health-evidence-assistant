@@ -1,0 +1,1457 @@
+GRADING RUBRIC
+
+  2 = Highly relevant. The document directly addresses the question and a
+      good answer would cite it.
+  1 = Partially relevant. The document is on-topic and contributes context,
+      but does not directly answer the question.
+  0 = Not relevant. The document shares vocabulary or subject area but would
+      not help answer the question.
+
+Be strict. Reserve 2 for documents that genuinely answer the question asked.
+
+Record one grade per item, in order. The automated grades are withheld from
+this file and stored in agreement_key.json.
+
+==============================================================================
+
+--- 1 of 36  [q07] ---
+
+QUESTION
+  What is the reported effect size of medication reconciliation on
+  readmission rates?
+
+DOCUMENT
+  Association of pharmacist counseling with adherence, 30-day readmission,
+  and mortality: A systematic review and meta-analysis of randomized trials.
+
+  OBJECTIVE(S): To determine the association of pharmacist medication
+  counseling with medication adherence, 30-day hospital readmission, and
+  mortality.
+
+  METHODS: The initial search identified 21,590 citations. After applying
+  the inclusion and exclusion criteria, 62 randomized controlled trials
+  (RCTs) (49 for the meta-analysis) were included in the final analysis.
+  Data were pooled using a random-effects model.
+
+  RESULTS: The participants in most of the studies were older patients with
+  chronic diseases who, therefore, were taking many drugs. The overall
+  methodologic quality of evidence ranged from low to very low. Pharmacist
+  medication counseling versus no such counseling was associated with a
+  statistically significant 30% increase in relative risk (RR) for
+  medication adherence, a 24% RR reduction in 30-day hospital readmission
+  (number needed to treat = 4.2), and a 30% RR reduction in emergency
+  department visits. RR reductions for primary care visits and mortality
+  were not statistically significant.
+
+  CONCLUSION: The evidence supports pharmacist medication counseling to
+  increase medication adherence and to reduce 30-day hospital readmissions
+  and emergency department visits. However, higher-quality RCT studies are
+  needed to confirm or refute these findings.
+
+GRADE: ___
+
+
+--- 2 of 36  [q20] ---
+
+QUESTION
+  Do financial penalties for readmissions produce sustained reductions?
+
+DOCUMENT
+  Thirty-day readmissions in children with complex chronic conditions.
+
+  INTRODUCTION: The rate of hospital readmission within 30 days of discharge
+  is a quality indicator in health care. Paediatric patients with complex
+  chronic conditions have high readmission rates. Failure in the transition
+  between hospital and home care could explain this phenomenon.
+
+  OBJECTIVES: To estimate the incidence rate of 30-day hospital readmission
+  in paediatric patients with complex chronic conditions, estimate how many
+  are potentially preventable and explore factors associated with
+  readmission.
+
+  MATERIALS AND METHOD: Cohort study including hospitalised patients with
+  complex chronic conditions aged 1 month to 18 years. Patients with cancer
+  or with congenital heart disease requiring surgical correction were
+  excluded. The outcomes assessed were 30-day readmission rate and
+  potentially preventable readmissions. We analysed sociodemographic,
+  geographic, clinical and transition to home care characteristics as
+  factors potentially associated with readmission.
+
+  RESULTS: The study included 171 hospitalizations, and 28 patients were
+  readmitted within 30 days (16.4%; 95% CI, 11.6%-22.7%). Of the 28
+  readmissions, 23 were potentially preventable (82.1%; 95% CI,
+  64.4%-92.1%). Respiratory disease was associated with a higher probability
+  of readmission. There was no association between 30-day readmission and
+  the characteristics of the transition to home care.
+
+  CONCLUSIONS: The 30-day readmission rate in patients with complex chronic
+  disease was 16.4%, and 82.1% of readmissions were potentially preventable.
+  Respiratory disease was the only identified risk factor for 30-day
+  readmission.
+
+GRADE: ___
+
+
+--- 3 of 36  [q22] ---
+
+QUESTION
+  What effect did the COVID-19 pandemic have on healthcare-associated
+  infection rates?
+
+DOCUMENT
+  Hospital-acquired infections in a tertiary hospital in Iran before and
+  during the COVID-19 pandemic.
+
+  Infection prevention protocols are the accepted standard to control
+  nosocomial infections. These protective measures intensified after the
+  coronavirus 2019 (COVID-19) pandemic to reduce the risk of viral
+  transmission. It is the rationale that this practice reduces nosocomial
+  infections. We evaluated the impact of these protective measures on
+  nosocomial infections in our center with more than 20,000 records of
+  annual patient admission. In a retrospective study, we evaluated the
+  incidence of nosocomial infections in Sina hospital for 9 months (April-
+  December 2020) during the COVID-19 period and compared it with the
+  8 months in the pre-COVID period (April-November 2019). Despite decreasing
+  the number of admissions during the COVID era (hospitalizations showed
+  a reduction of 43.79%), the total hospital nosocomial infections remained
+  unchanged; 4.73% in the pre-COVID period versus 4.78% during the COVID
+  period. During the COVID period the infection percentages increased in the
+  cardiovascular care unit (p-value = 0.002) and intensive care units
+  (p-value = 0.045), and declined in cardiology (p-value = 0.046) and
+  neurology (p-value = 0.019) wards. This study showed that intensifying the
+  infection prevention protocols is important in decreasing the nosocomial
+  infections in some wards (cardiology and neurology). Still, we saw
+  increased nosocomial infection in some wards, e.g., the intensive care
+  unit (ICU) and coronary care unit (CCU). Thus, enhanced infection
+  prevention protocols implemented in hospitals to prevent the spread of
+  a pandemic infection may not always decrease rates of other hospital-
+  acquired infections during a pandemic. Due to limited resources, transfer
+  of staff, and staff shortage due to quarantine measures may prohibit
+  improved prevention procedures from effectively controlling nosocomial
+  infections.
+
+GRADE: ___
+
+
+--- 4 of 36  [q21] ---
+
+QUESTION
+  Do current quality measures accurately reflect the quality of care
+  delivered?
+
+DOCUMENT
+  Composite quality measures of abdominal surgery at a population level:
+  systematic review.
+
+  BACKGROUND: Measurement of surgical quality at a population level is
+  challenging. Composite quality measures derived from administrative and
+  clinical information systems could support system-wide surgical quality
+  improvement by providing a simple metric that can be evaluated over time.
+  The aim of this systematic review was to identify published studies of
+  composite measures used to assess the overall quality of abdominal
+  surgical services at a hospital or population level.
+
+  METHODS: A search was conducted in PubMed and MEDLINE for references
+  describing measurement instruments evaluating the overall quality of
+  abdominal surgery. Instruments combining multiple process and quality
+  indicators into a single composite quality score were included. The
+  identified instruments were described in terms of transparency,
+  justification, handling of missing data, case-mix adjustment, scale
+  branding and choice of weight and uncertainty to assess their relative
+  strengths and weaknesses (PROSPERO registration: CRD42022345074).
+
+  RESULTS: Of 5234 manuscripts screened, 13 were included. Ten unique
+  composite quality measures were identified, mostly developed within the
+  past decade. Outcome measures such as mortality rate (40 per cent), length
+  of stay (40 per cent), complication rate (60 per cent) and morbidity rate
+  (70 per cent) were consistently included. A major challenge for all
+  instruments is the reliance of valid administrative data and the
+  challenges of assigning appropriate weights to the underlying instrument
+  components. A conceptual framework for composite measures of surgical
+  quality was developed.
+
+  CONCLUSION: None of the composite quality measures identified demonstrated
+  marked superiority over others. The degree to which administrative and
+  clinical data influences each composite measure differs in important ways.
+  There is a need for further testing and development of these measures.
+
+GRADE: ___
+
+
+--- 5 of 36  [q23] ---
+
+QUESTION
+  What is the optimal dosing schedule for vancomycin in MRSA bacteremia?
+
+DOCUMENT
+  The impact of antimicrobial de-escalation therapy in culture-negative
+  pneumonia: a systematic review and meta-analysis.
+
+  BACKGROUND/AIMS: Antimicrobial de-escalation (ADE) remains a challenging
+  strategy in the treatment of pneumonia. We investigated the outcomes of
+  ADE as measured by mortality and duration of the use of antibiotics in
+  patients with culture- negative pneumonia.
+
+  METHODS: We performed a systematic review and meta-analysis in accordance
+  with PRISMA guidelines. The primary outcome was inpatient mortality.
+
+  RESULTS: We examined six studies comprising 11,933 subjects, of whom 1,152
+  received ADE. Overall, the ADE strategy was associated with a
+  statistically lower risk of in-hospital mortality compared with non-ADE
+  (risk ratio [RR] = 0.60, 95% confidence interval [CI] = 0.38 to 0.93).
+  Although substantial heterogeneity was found among the included studies
+  (I2 = 66%), a meta-regression analysis could not reveal plausible sources
+  of heterogeneity. And ADE was associated with a shorter duration of total
+  and initial antibiotic therapies and total length of hospital stay
+  compared with non-ADE.
+
+  CONCLUSION: Our findings suggest that ADE seems to be significantly
+  associated with better clinical outcomes compared with non-ADE. Caution is
+  demanded when interpreting data of this study because of substantial
+  between-study heterogeneity.
+
+GRADE: ___
+
+
+--- 6 of 36  [q04] ---
+
+QUESTION
+  What factors predict in-hospital mortality in sepsis?
+
+DOCUMENT
+  Predictors of In-Hospital Mortality in Patients With ST-Segment Elevation
+  Myocardial Infarction Complicated With Cardiogenic Shock.
+
+  BACKGROUND: ST-segment elevation myocardial infarction (STEMI) complicated
+  with cardiogenic shock (CS) remains as an unresolved condition causing
+  high morbidity and mortality despite advances in medical treatment and
+  coronary intervention procedures. In the current study, we evaluated the
+  predictors of in-hospital mortality of STEMI complicated with CS.
+
+  METHODS: In this retrospective study, we evaluated the predictive value of
+  baseline characteristics, angiographic, echocardiographic and laboratory
+  parameters on in-hospital mortality of 319 patients with STEMI complicated
+  with CS who were treated with primary percutaneous coronary intervention.
+  Patients were divided into two groups consisting of survivors and non-
+  survivors during their index hospitalisation period.
+
+  RESULTS: The mortality rate was found to be 61.3% in the study population.
+  At multivariate analysis after adjustment for the parameters detected in
+  univariate analysis, chronic renal failure, Thrombolysis In Myocardial
+  Infarction (TIMI) post percutaneous coronary intervention (PCI) ≤2, plasma
+  glucose and lactate level, blood urea nitrogen level, Tricuspid Annular
+  Plane Systolic Excursion (TAPSE) and ejection fraction were independent
+  predictors of in-hospital mortality.
+
+  CONCLUSIONS: Apart from haemodynamic deterioration, angiographic,
+  echocardiographic and laboratory parameters have an impact on in-hospital
+  mortality in patients with STEMI complicated with CS.
+
+GRADE: ___
+
+
+--- 7 of 36  [q15] ---
+
+QUESTION
+  How do healthcare-associated infections affect hospital mortality rates?
+
+DOCUMENT
+  Risk Factors and Outcomes in Critically Ill Patients with Hematological
+  Malignancies Complicated by Hospital-Acquired Infections.
+
+  Background and objectives: Patients admitted to the intensive care unit
+  (ICU) have an increased risk of hospital-acquired infection (HAI). A
+  diagnosis of cancer alone increases the risk of sepsis three-five-fold,
+  which further increases the risk of nosocomial infection, subsequently
+  deteriorates results, and leads to high mortality. In this study, we aimed
+  to assess the mortality rate among hematologic oncologic patients with
+  suspected infection who were subsequently admitted to the ICU and the
+  predictive factors that are associated with high ICU mortality. Materials
+  and Methods: This retrospective cohort study was conducted in the
+  hematological oncology critical care unit of a tertiary care hospital
+  between November 2017 and February 2021. We analyzed anonymized medical
+  records of hospitalized hematologic oncologic patients who were suspected
+  or proven to have infection in the hematology-oncology department and were
+  subsequently transferred to the ICU. Results: Both shorter hospitalization
+  and shorter ICU stay length were observed in survivors [9.2 (7.7-10.4)]
+  vs. non-survivors [10 (9.1-12.9), p = 0.004]. Sepsis had the highest
+  hazard ratio (7.38) among all other factors, as patients with sepsis had
+  higher mortality rates (98% among ICU non-survivors and 57% among ICU
+  survivors) than those who had febrile neutropenia. Conclusions: The
+  overall ICU mortality in patients with hematologic malignancies was 66%.
+  Sepsis had the highest hazard ratio among all other predictive factors, as
+  patients with sepsis had higher mortality rates than those who had febrile
+  neutropenia. Chronic hepatitis (HBV and HCV) was significantly associated
+  with higher ICU mortality.
+
+GRADE: ___
+
+
+--- 8 of 36  [q01] ---
+
+QUESTION
+  What interventions reduce 30-day readmissions for heart failure patients?
+
+DOCUMENT
+  The Heart Failure Clinic: Improving 30-Day All-Cause Hospital
+  Readmissions.
+
+  Heart failure-related recurrent hospitalizations are widely recognized as
+  a source of burden to both patients and the health system. Hospital
+  discharges represent a transition of care and can often become a catalyst
+  for readmission. One strategy in reducing this burden is the
+  implementation of dedicated heart failure clinics. We conducted a
+  retrospective review of all patients discharged from an inner city safety-
+  net public hospital with a discharge diagnosis of heart failure. Patients
+  followed in the Heart Clinic (HC) were compared to those with standard
+  follow-up. All included cases were followed for 30 days after discharge to
+  determine whether an all-cause readmission occurred. There were 258
+  patient discharges with an overall sicker population in the HC cohort. The
+  HC group had a better event-free survival with a 67.1% reduction in
+  readmission (log rank *p < .05). In concluding, a dedicated heart failure
+  clinic reduced 30-day readmissions for patients who were discharged after
+  having an acute exacerbation of heart failure.
+
+GRADE: ___
+
+
+--- 9 of 36  [q09] ---
+
+QUESTION
+  What methodological challenges arise in selecting and defining stroke
+  quality indicators?
+
+DOCUMENT
+  Quality indicators for anesthesia and perioperative medicine.
+
+  PURPOSE OF REVIEW: Routine monitoring of care quality is fundamental
+  considering the high reported rates of preventable perioperative morbidity
+  and mortality. However, no set of valid and feasible quality indicators is
+  available as the gold standard for comprehensive routine monitoring of the
+  overall quality of perioperative care. The purpose of this review is to
+  describe underlying difficulties, to summarize current trends and
+  initiatives and to outline the perspectives in support of suitable
+  perioperative quality indicators.
+
+  RECENT FINDINGS: Most perioperative quality indicators used in the
+  clinical setting are based on low or no evidence. Evidence-based
+  perioperative quality indicators validated for research purposes are not
+  always applicable in routine care. Developing a core set of perioperative
+  quality indicators for clinical practice may benefit from matching
+  feasible routine indicators with evidence-based indicators validated for
+  research, from evaluating additional new indicators, and from including
+  patients' views.
+
+  SUMMARY: A core set of valid and feasible quality indicators is essential
+  for monitoring perioperative care quality. The development of such a set
+  may benefit from matching evidence-based indicators with feasible standard
+  indicators and from including patients' views.
+
+GRADE: ___
+
+
+--- 10 of 36  [q02] ---
+
+QUESTION
+  Which hand hygiene interventions improve compliance in hospital settings?
+
+DOCUMENT
+  Hand hygiene in low- and middle-income countries.
+
+  A panel of experts was convened by the International Society for
+  Infectious Diseases (ISID) to overview evidence based strategies to reduce
+  the transmission of pathogens via the hands of healthcare workers and the
+  subsequent incidence of hospital acquired infections with a focus on
+  implementing these strategies in low- and middle-income countries.
+  Existing data suggests that hospital patients in low- and middle-income
+  countries are exposed to rates of healthcare associated infections at
+  least 2-fold higher than in high income countries. In addition to the
+  universal challenges to the implementation of effective hand hygiene
+  strategies, hospitals in low- and middle-income countries face a range of
+  unique barriers, including overcrowding and securing a reliable and
+  sustainable supply of alcohol-based handrub. The WHO Multimodal Hand
+  Hygiene Improvement Strategy and its associated resources represent an
+  evidence-based framework for developing a locally-adapted implementation
+  plan for hand hygiene promotion.
+
+GRADE: ___
+
+
+--- 11 of 36  [q24] ---
+
+QUESTION
+  What are the readmission rates for psychiatric inpatients in the United
+  Kingdom?
+
+DOCUMENT
+  Hospital Readmission and Mortality in a Brazilian Tertiary Public
+  Hospital.
+
+  BACKGROUND AND OBJECTIVES: Data on mortality associated with hospital
+  readmission are imprecise and highly variable. This study aimed to
+  describe the rate of nonelective 30-day readmission and associated
+  hospital mortality of patients discharged from the Internal Medicine Unit
+  of a Brazilian tertiary public hospital.
+
+  METHODS: This retrospective cohort study included all patients discharged
+  from the Internal Medicine Unit of our institution between September and
+  November 2017 who were nonelectively readmitted within 30 days.
+
+  RESULTS: A total of 1047 hospital discharges were analyzed. The rate of
+  nonelective 30-day readmission was 13.7%. Of these, 41 (28.5%) were early
+  readmissions (0-7 days) and 103 (71.5%) were late readmissions (8-30
+  days). The hospital mortality rate during readmission was 27.8%, being
+  significantly higher during early readmissions (41.5% vs 22.3%; P = .035).
+  Early (as compared with late) readmission was associated with mortality
+  during readmission (relative risk [RR] 1.95; 95% confidence interval,
+  1.18-3.22; P = .002), regardless of age and Charlson comorbidity index.
+
+  CONCLUSION: The Readmission rate was 13.7%, with an associated mortality
+  of 27.8%. Early readmission was an independent predictor of mortality (RR
+  1.95) in relation to late readmission. Larger studies are needed to better
+  identify this group of patients with an aim to adopt preventive measures.
+
+GRADE: ___
+
+
+--- 12 of 36  [q13] ---
+
+QUESTION
+  What do surveillance data show about CAUTI trends in acute care hospitals?
+
+DOCUMENT
+  Epidemiology of device-associated healthcare-associated infections and
+  carbapenem-resistant Enterobacteriaceae in intensive care units: a 7-year
+  multicenter surveillance in Shanghai, China.
+
+  OBJECTIVE: This study aimed to update the incidence of device-associated
+  healthcare-associated infections (DA-HAIs), and to characterize pathogen
+  distribution and carbapenem-resistant Enterobacteriaceae (CRE) detection
+  among ICU patients in Shanghai, China.
+
+  METHODS: Prospective surveillance in 223 ICUs using standardized
+  International Nosocomial Infection Control Consortium methodology (INICC)
+  protocols collected patient-level data on demographics, microbiology,
+  device use, and DA-HAIs. Trends, annual percent change (APC) and average
+  annual percent change (AAPC) were estimated using Joinpoint regression
+  models.
+
+  RESULTS: The overall DA-HAIs incidence density in ICUs was 1.67 per 1000
+  catheter-days for catheter-associated urinary tract infection (CAUTI) (95%
+  CI: 1.62-1.73), 0.59 per 1000 central line-days for central line-
+  associated bloodstream infection (CLABSI) (95% CI: 0.56-0.63), and 4.63
+  per 1000 ventilator-days for ventilator-associated pneumonia (VAP) (95%
+  CI: 4.51-4.76). Significant reductions were observed in VAP (AAPC:
+  -15.36%; P < 0.001) and CLABSI (AAPC: -11.23%; P < 0.001). Pathogen
+  distributions varied by infection type, with Enterococcus faecium (17.22%)
+  and Klebsiella pneumoniae (16.63%) predominating in CAUTI patients,
+  Klebsiella pneumoniae (26.87%) in CLABSI patients, and Acinetobacter
+  baumannii (37.60%) in VAP patients. The overall CRE detection rate was
+  33.67% in CAUTI patients, 37.56% in CLABSI patients, and 35.24% in VAP
+  patients.
+
+  CONCLUSIONS: Although DA-HAI rates showed significant declines, the
+  persistently high CRE prevalence underscores substantial antimicrobial
+  resistance challenges in Chinese ICUs.
+
+GRADE: ___
+
+
+--- 13 of 36  [q09] ---
+
+QUESTION
+  What methodological challenges arise in selecting and defining stroke
+  quality indicators?
+
+DOCUMENT
+  A set of care quality indicators for stroke management.
+
+  OBJECTIVE: This study proposes a set of quality indicators for care
+  outcomes in patients with acute cerebral infarction. These indicators are
+  understandable and relevant from a clinical viewpoint, as well as being
+  acceptable and feasible in terms of time required, ease of data capture,
+  and interpretability.
+
+  METHOD: The method consisted of reaching consensus among doctors after
+  having reviewed the literature on quality indicators in stroke. We then
+  designed and conducted a field study to assess the understandability and
+  feasibility of the set of indicators.
+
+  RESULTS: Consensus yielded 8 structural indicators, 5 process indicators,
+  and 12 result indicators. Additionally, standards of reference were
+  established for each indicator.
+
+  CONCLUSION: This set of indicators can be used to monitor the quality care
+  for stroke patients, identify strengths, and potentially to identify areas
+  needing improvement.
+
+GRADE: ___
+
+
+--- 14 of 36  [q19] ---
+
+QUESTION
+  What has been the measured impact of the Hospital Readmissions Reduction
+  Program?
+
+DOCUMENT
+  Meds to Beds at Hospital Discharge Improves Medication Adherence and
+  Readmission Rates in Select Populations.
+
+  OBJECTIVES: Medication nonadherence caused by difficulty obtaining and
+  paying for medicines can increase hospital readmissions. This project
+  implemented Medications to Beds ("Meds to Beds," M2B), a multidisciplinary
+  predischarge medication delivery program, at a large urban academic
+  hospital that provided subsidized medications for uninsured and
+  underinsured patients to reduce readmissions.
+
+  METHODS: This 1-year retrospective analysis of patients discharged from
+  the hospitalist service after implementing M2B contained two groups: one
+  with subsidized medications (M2B-S) and one with unsubsidized medications
+  (M2B-U). Primary analysis was 30-day readmission rates for patients,
+  stratified by Charlson Comorbidity indexes (CCIs) of 0, 1-3, ≥4 to
+  represent low, medium, and high comorbidity burden. Secondary analysis
+  included readmission rates by Medicare Hospital Readmission Reduction
+  Program diagnoses.
+
+  RESULTS: Compared with controls, the M2B-S and M2B-U programs had
+  significantly reduced readmission rates among patients with CCIs of 0
+  (10.5% [controls] vs 9.4% [M2B-U] and 5.1% [M2B-S], P < 0.05). A
+  nonsignificant reduction occurred in readmissions for patients with CCIs
+  ≥4 (20.4% [controls] vs 19.4% [M2B-U] vs 14.7% [M2B-S], P < 0.07).
+  Patients with CCIs of 1 to 3 showed a significant increase in readmission
+  rates in the M2B-U, but a decrease in readmission rates among the M2B-S
+  (15.4% [controls] vs 20% [M2B-U] vs 13.1% [M2B-S], P < 0.05). Secondary
+  analyses found no significant differences in readmission rates when
+  patients were stratified by Medicare Hospital Readmission Reduction
+  Program diagnosis. Cost analyses demonstrated that subsidizing medicines
+  cost less per patient for every 1% readmission reduction than delivery
+  alone.
+
+  CONCLUSIONS: Providing medicine to patients predischarge tends to lower
+  readmission rates for populations with no comorbidities or with a high
+  burden of disease. This effect is amplified when prescription costs are
+  subsidized.
+
+GRADE: ___
+
+
+--- 15 of 36  [q10] ---
+
+QUESTION
+  How do nursing staffing shortages affect patient safety and inpatient
+  outcomes?
+
+DOCUMENT
+  Nurse-led postdischarge telephone follow-up calls: A mixed study
+  systematic review.
+
+  AIMS AND OBJECTIVES: To explore the quantitative and qualitative
+  literature on the impact of nurse-led postdischarge telephone follow-up
+  (TFU) call interventions on patient outcomes.
+
+  BACKGROUND: Adverse patient outcomes such as postdischarge problems,
+  premature contact with health systems, inability to self-manage conditions
+  and hospital readmissions all have an impact on the health and well-being,
+  and satisfaction of patients as well as a financial impact on healthcare
+  systems.
+
+  DESIGN: A mixed-study systematic review.
+
+  REVIEW METHODS: A systematic search of CINAHL, Ebsco, PubMed, Quest and
+  Cinch-Health databases was undertaken using the key terms "nurs*," "nurse-
+  led," "nurse initiated," "discharge," "hospital," "telephone," "follow-up"
+  and "telephone follow-up" to identify relevant original peer-reviewed
+  studies published between 2010-2016. Ten articles were selected for
+  inclusion. The selected papers were critically appraised. A sequential
+  explanatory approach with a convergent synthesis was used to report
+  findings following PRISMA guidelines.
+
+  RESULTS: The findings demonstrate that nurse-led TFU interventions have
+  the potential to improve patient outcomes. The studies suggest patient
+  satisfaction with TFU is one of the strongest positive outcomes from the
+  interventions. However, the results do not support improvement in patient
+  readmission or mortality.
+
+  CONCLUSIONS: Of the 10 studies reviewed, only two were methodologically
+  strong limiting the conclusions that can be drawn from the current
+  research on this topic. Telephone follow-up interventions improve patient
+  satisfaction and have the potential to meet patient information and
+  communication needs, improve self-management and follow-up appointment
+  attendance and reduce postdischarge problems. Further research is required
+  to explore patients' perceptions of the most useful content of TFU calls,
+  the efficacy of TFU calls and nurses' perceptions and experiences of
+  conducting TFU interventions.
+
+  RELEVANCE TO CLINICAL PRACTICE: When conducted by a nurse, these
+  interventions have the potential to enhance postdischarge care to patients
+  and meet care needs. Patients perceive TFU as acceptable and are satisfied
+  with this form of postdischarge care.
+
+GRADE: ___
+
+
+--- 16 of 36  [q10] ---
+
+QUESTION
+  How do nursing staffing shortages affect patient safety and inpatient
+  outcomes?
+
+DOCUMENT
+  In-hospital mortality as the side effect of missed care.
+
+  AIM: The aim of the study was to assess the influence of the number of
+  hours of daily nursing care for NHPPD in medical departments on missed
+  care and the correlation between NHPPD and in-hospital mortality.
+
+  BACKGROUND: Patient mortality can be a consequence of missed care as it
+  correlates with the nurse-patient ratio. One of the methods to measure
+  missed care is the Nursing Hours per Patient Day rating.
+
+  METHODS: The study sample included 44,809 patients including 971 deaths in
+  8 wards. The influence of nursing hours, nursing education, and the
+  percentage of patients' classification on in-hospital mortality were
+  evaluated with backward stepwise linear regression.
+
+  RESULTS: One hour added to the average NHPPD in medical departments was
+  related to a decrease in mortality rate by 6.8 per 1,000 patient days and
+  a lower chance for the emergence of unplanned death by 36%.
+
+  CONCLUSIONS: The number of NHPPD and the percentage of professional nurses
+  are factors influencing missed care and in-hospital mortality.
+
+  IMPLICATIONS FOR NURSING MANAGEMENT: The severe consequences of missed
+  care, that is mortality, and the correlation between in-hospital
+  mortality, nursing education and nursing-patient ratio, which are
+  indicators of care quality, are arguments for maintaining adequate
+  staffing levels to avoid missed care.
+
+GRADE: ___
+
+
+--- 17 of 36  [q04] ---
+
+QUESTION
+  What factors predict in-hospital mortality in sepsis?
+
+DOCUMENT
+  A prediction model to predict in-hospital mortality in patients with acute
+  type B aortic dissection.
+
+  BACKGROUND: Acute type B aortic dissection (ABAD) is a life-threatening
+  cardiovascular disease. A practicable and effective prediction model to
+  predict and evaluate the risk of in-hospital death for ABAD is required.
+  The present study aimed to construct a prediction model to predict the
+  risk of in-hospital death in ABAD patients.
+
+  METHODS: A total of 715 patients with ABAD were recruited in the first
+  affiliated hospital of Xinjiang medical university from April 2012 to May
+  2021. The information on the demographic and clinical characteristics of
+  all subjects was collected. The logistic regression analysis, receiver
+  operating characteristic (ROC) curve analysis, and nomogram were applied
+  to screen the appropriate predictors and to establish a prediction model
+  for the risk of in-hospital mortality in ABAD. The receiver operator
+  characteristic curve and calibration plot were applied to validate the
+  performance of the prediction model.
+
+  RESULTS: Of 53 (7.41%) subjects occurred in-hospital death in 715 ABAD
+  patients. The variables including diastolic blood pressure (DBP),
+  platelets, heart rate, neutrophil-lymphocyte ratio, D-dimer, C-reactive
+  protein (CRP), white blood cell (WBC), hemoglobin, lactate dehydrogenase
+  (LDH), procalcitonin, and left ventricular ejection fraction (LVEF) were
+  shown a significant difference between the in-hospital death group and the
+  in-hospital survival group (all P < 0.05). Furthermore, all these factors
+  which existed differences, except CRP, were associated with in-hospital
+  deaths in ABAD patients (all P < 0.05). Then, parameters containing LVEF,
+  WBC, hemoglobin, LDH, and procalcitonin were identified as independent
+  risk factors for in-hospital deaths in ABAD patients by adjusting compound
+  variables (all P < 0.05). In addition, these independent factors were
+  qualified as predictors to build a prediction model (AUC > 0.5, P < 0.05).
+  The prediction model was shown a favorable discriminative ability (C
+  index = 0.745) and demonstrated good consistency.
+
+  CONCLUSIONS: The novel prediction model combined with WBC, hemoglobin,
+  LDH, procalcitonin, and LVEF, was a practicable and valuable tool to
+  predict in-hospital deaths in ABAD patients.
+
+GRADE: ___
+
+
+--- 18 of 36  [q07] ---
+
+QUESTION
+  What is the reported effect size of medication reconciliation on
+  readmission rates?
+
+DOCUMENT
+  Impact of Discharge Medication Reconciliation Across a Five-Hospital
+  Health System.
+
+  PURPOSE: Hospital readmission of a primary diagnosis can have a
+  substantial financial impact via reductions in reimbursement rates up to
+  3%, and have a negative impact on the lives of patients. Discharge
+  medication reconciliation (DMR) can reduce medication errors that play a
+  role in readmission. The objective of this study is to evaluate the impact
+  of expanding pharmacist-led DMR across a four hospital health system on
+  30-day readmission rate for high risk of readmission disease groups.
+
+  METHODS: During the 3-month period, DMR was performed for patients with at
+  least one of the disease states associated with a high risk for 30-day
+  readmission, including chronic obstructive pulmonary disease, pneumonia,
+  congestive heart failure, or acute myocardial infarction.
+
+  RESULTS: The 30-day readmission rate for patients with a high risk for
+  readmission disease state significantly decreased from 17.5% to 15.5% in
+  the pre-expansion to postexpansion phase, respectively ( p = .003).
+  Discharge medication reconciliation capture rate increased from 28% pre-
+  expansion to 35% postexpansion. After expansion, the number of DMR
+  interventions reported by pharmacists increased 2.93 times.
+
+  CONCLUSION: Expansion of pharmacist-led DMR as a form of transitions of
+  care significantly decreased 30-day readmission rate for high risk of
+  readmission disease groups.
+
+GRADE: ___
+
+
+--- 19 of 36  [q02] ---
+
+QUESTION
+  Which hand hygiene interventions improve compliance in hospital settings?
+
+DOCUMENT
+  Effects of the care transition intervention on hospital readmission and
+  quality of life in older adults with multiple chronic conditions: A mixed
+  methods study.
+
+  BACKGROUND: The care transition intervention has been designed to guide
+  users in supporting older adults during care transitions; however, there
+  is little knowledge about its effectiveness in older adults with multiple
+  chronic conditions.
+
+  OBJECTIVE: This study evaluated the effects of the care transition
+  intervention in older adults with multiple chronic conditions.
+
+  DESIGN: A randomized intervention study with a mixed-methods design was
+  conducted.
+
+  METHODS: The quantitative phase of the study was conducted using a
+  randomized clinical trial on older patients with multiple chronic
+  conditions referred to the Imam Khomeini Hospital in Sari (Mazandaran,
+  Iran) in 2022-2024. Patients in the experimental group received the care
+  transition intervention which involved implementing a patient-centered
+  record, and providing education on medication self-management, warning
+  signs of worsening health condition(s) and how react to them, and follow-
+  up. Patients in the control group received routine hospital care. Quality
+  of life and the number of hospital readmissions were assessed before the
+  intervention, and at one, three, and six months after hospital discharge.
+  The qualitative phase focused on understanding the experiences of patients
+  and caregivers who had participated in the care transition intervention.
+  Qualitative data were analyzed using conventional content analysis.
+  Finally, after analyzing the data from the quantitative and qualitative
+  phases, the quantitative findings were compared to the qualitative
+  findings.
+
+  RESULTS: There was a statistically significant between group difference in
+  Quality of life at one (control group: 69.28(8.64), experimental group:
+  64.36(10.82)), three (control group: 71.41(8.70), experimental group:
+  64.20(10.90)) and six months (control group: 72.21(8.93), experimental
+  group: 64.29 (11.26)) after hospital discharge (P < 0.05). Also, hospital
+  readmission in the control group was 73 % higher than the experimental
+  group. The greatest effect of the intervention for quality of life (effect
+  size = 0.77) and readmission (effect size = 0.63) was found six months
+  after discharge. Qualitative findings support a beneficial effect of the
+  care transition intervention on the quality of life and readmission in
+  older adults.
+
+  CONCLUSIONS: Using the care transition intervention for older adults with
+  multiple chronic conditions improves health-related outcomes and is
+  associated with reduced disease burden and more satisfaction towards life
+  in different physical, psychological, and social dimensions for them.
+  Therefore, implementing the care transition intervention can be useful for
+  patients, their families and the healthcare system.
+
+  REGISTRATION: This trial was registered at irct.behdasht.gov.ir
+  (Identifier: IRCT20180930041185N3, Registration date: 2022-09-23) and the
+  first participant was registered in December 2022.
+
+GRADE: ___
+
+
+--- 20 of 36  [q02] ---
+
+QUESTION
+  Which hand hygiene interventions improve compliance in hospital settings?
+
+DOCUMENT
+  Top-ten papers in Infection Control (2015-2017).
+
+  Healthcare-associated infections are a main Public Health challenge. In
+  the era of antimicrobial resistance, more effective Infection Control
+  Programs are needed. In this review we will discuss some publications
+  related to hand hygiene (should the patients participate in the
+  improvement programs?); some new strategies to enhance terminal room
+  disinfection and important controversies on contact precautions policies
+  (should we abandon them?). In the last year, there have been as well some
+  reports that provide new insights in Clostridium difficile infection and
+  in the impact of educational antimicrobial stewardship programs.
+
+GRADE: ___
+
+
+--- 21 of 36  [q10] ---
+
+QUESTION
+  How do nursing staffing shortages affect patient safety and inpatient
+  outcomes?
+
+DOCUMENT
+  The Effect of Patient Safety Education on Undergraduate Nursing Students'
+  Patient Safety Competencies.
+
+  Patient safety is influenced by a set of factors in various levels of the
+  healthcare system. One of the factors affecting patient safety is safety
+  competencies of the nursing students. The current study aimed to evaluate
+  the effect of patient safety education on patient safety competencies of
+  the nursing students. This quasi-experimental study was conducted with a
+  pretest-posttest deign. The levels of patient safety competencies of 50
+  nursing students were investigated in a nursing school affiliated to large
+  university of medical sciences in the south of Iran in 2019. Data were
+  collected using Health Professional Education in Patient Safety Survey
+  (H-PEPSS). The data were analyzed in SPSS 21 using descriptive statistics
+  and repeated measures ANOVA. The three investigated intervals were
+  significantly different in terms of the total H-PEPSS dimensions, while
+  the lowest was attributed to the dimension "managing safety". Mean scores
+  of "how broader patient safety issues are addressed in health professional
+  education" and "comfort speaking up about patient safety" significantly
+  increased during the follow-up periods. The educational intervention was
+  partially effective in improving patient safety competencies of the
+  nursing students over long term.
+
+GRADE: ___
+
+
+--- 22 of 36  [q17] ---
+
+QUESTION
+  How are quality indicators developed and validated for specific clinical
+  specialties?
+
+DOCUMENT
+  Quality indicators for radiation oncology.
+
+  Quality Indicators, based on clinical practice guidelines, have been used
+  in medicine and within oncology to measure quality of care for over twenty
+  years. However, radiation oncology quality indicators are sparse. This
+  article describes the background to the development of current national
+  and international, general and tumour site-specific radiation oncology
+  quality indicators in use. We explore challenges and opportunities to
+  expand their routine prospective collection and feedback to help drive
+  improvements in the quality of care received by people undergoing
+  radiation therapy.
+
+GRADE: ___
+
+
+--- 23 of 36  [q04] ---
+
+QUESTION
+  What factors predict in-hospital mortality in sepsis?
+
+DOCUMENT
+  Factors associated with in-hospital mortality among infective endocarditis
+  patients.
+
+  INTRODUCTION: Despite recent advancements in the diagnosis and management
+  of infective endocarditis (IE), it is associated with substantial
+  morbidity and mortality. Our study objective is to determine the factors
+  associated with in-hospital mortality in IE patients among the local
+  population.
+
+  MATERIALS AND METHODS: All IE patients who were diagnosed with definite or
+  possible IE and were treated at Sarawak Heart Centre from 1st January 2020
+  to 31st December 2022 were recruited. We examined the demographic features
+  of the subjects and the factors that contributed to in-hospital mortality.
+  Multivariate logistic regression was used to analyse the associated
+  factors and in-hospital mortality.
+
+  RESULTS: Our study population comprised a total of 37 patients with a mean
+  age of 46.4 years and male predominance. The in-hospital mortality rate of
+  IE in this study was 44.4%. Haemodynamic instability and anaemia were
+  found to be strong predictors of IE survival outcome, with an odds ratio
+  of 51.5 and 35.7 respectively. Patients with vascular phenomenon and heart
+  failure were at 10.5- and 6.0-times higher odds of dying, however, these
+  two associations were found to be not statistically significant.
+
+  CONCLUSION: The in-hospital mortality due to IE in our study was among the
+  highest in developing countries. Factors of hypotension and optimal
+  response to individual hemodynamic parameters may confer lower mortality.
+  While anaemia is demonstrable as a risk factor for inpatient mortality, a
+  target has yet to be reasonably established.
+
+GRADE: ___
+
+
+--- 24 of 36  [q22] ---
+
+QUESTION
+  What effect did the COVID-19 pandemic have on healthcare-associated
+  infection rates?
+
+DOCUMENT
+  Healthcare associated infections (HAI): Insights into epidemiology,
+  microbiology, and diagnostics.
+
+  Healthcare associated infections remain a major global health concern
+  because they increase illness, mortality, hospital stay, and healthcare
+  costs. This review provides an updated synthesis of recent evidence on the
+  epidemiology, microbiology, diagnostics, and prevention of healthcare
+  associated infections. These infections arise from patient susceptibility,
+  invasive procedures, antibiotic overuse, contaminated equipment, and poor
+  infection control practices. Device associated infections such as catheter
+  associated urinary tract infection, central line associated bloodstream
+  infection, ventilator associated pneumonia, and surgical site infection
+  are common and often involve multidrug resistant pathogens. Biofilm
+  formation on devices and hospital surfaces creates persistent reservoirs
+  that promote resistance spread. Advances in automated culture systems,
+  rapid molecular assays, metagenomics, and whole genome sequencing improve
+  detection and surveillance. This article integrates evidence from 2020 to
+  2025 to provide a multidisciplinary framework for understanding and
+  controlling HAIs.
+
+GRADE: ___
+
+
+--- 25 of 36  [q05] ---
+
+QUESTION
+  How effective are discharge follow-up phone calls at reducing
+  readmissions?
+
+DOCUMENT
+  Timing, Patterns and Predictors of 90-Day Readmission Rate after Robotic
+  Radical Cystectomy.
+
+  PURPOSE: We examine the timing, patterns and predictors of 90-day
+  readmission after robotic radical cystectomy.
+
+  MATERIALS AND METHODS: From September 2009 to March 2017, 271 consecutive
+  patients undergoing robotic radical cystectomy with intent to cure bladder
+  cancer (intracorporeal diversion 253, 93%) were identified from our
+  prospectively collated institutional database. Readmission was defined as
+  any subsequent inpatient admission or unplanned visit occurring within 90
+  days from discharge after the index hospitalization. Multiple readmissions
+  were defined as 2 or more readmissions within a 90-day period. Logistic
+  regression analysis was used to identify independent factors related to
+  single and multiple 90-day readmissions.
+
+  RESULTS: A total of 78 (28.8%) patients were readmitted at least once
+  within 90 days after discharge, of whom 20 (25.6%) reported multiple
+  readmissions. The cumulative duration of readmission was 6.2 (6.17) days
+  with 6 (7.6%) patients having less than 24 hours readmission. Metabolic,
+  infectious, genitourinary and gastrointestinal complications were
+  identified as the primary cause of readmission in 39.5%, 23.5%, 22.3% and
+  17%, respectively. Fifty percent of readmissions occurred in the first 2
+  weeks after hospital discharge. On multivariable logistic regression
+  analysis in-hospital infections (OR 2.85, p=0.001) were independent
+  predictors for overall readmission. Male gender (OR 3.5, p=0.02) and in-
+  hospital infections (OR 4.35, p=0.002) were independent predictors for
+  multiple readmissions.
+
+  CONCLUSIONS: The 90-day readmission rate following robotic radical
+  cystectomy is significant. In-hospital infections and male gender were
+  independent factors for readmission. Most readmissions occurred in the
+  first 2 weeks following discharge, with metabolic derangements and
+  infections being the most common causes.
+
+GRADE: ___
+
+
+--- 26 of 36  [q15] ---
+
+QUESTION
+  How do healthcare-associated infections affect hospital mortality rates?
+
+DOCUMENT
+  In-hospital mortality associated with community-acquired pneumonia due to
+  methicillin-resistant Staphylococcus aureus: a matched-pair cohort study.
+
+  BACKGROUND: It remains unclear whether methicillin-resistant
+  Staphylococcus aureus (MRSA) pneumonia is associated with higher mortality
+  compared with non-MRSA pneumonia. This study's objective was to compare
+  outcomes including in-hospital mortality and healthcare costs during
+  hospitalisation between patients with MRSA pneumonia and those with non-
+  MRSA pneumonia.
+
+  METHODS: Using a national inpatient database in Japan, we conducted a 1:4
+  matched-pair cohort study of inpatients with community-acquired pneumonia
+  from 1 April 2012 to 31 March 2014. In-hospital outcomes (mortality,
+  length of stay and healthcare costs during hospitalisation) were compared
+  between patients with and without MRSA infection. We performed multiple
+  imputation using chained equations followed by multivariable regression
+  analyses fitted with generalised estimating equations to account for
+  clustering within matched pairs. All-cause in-hospital mortality and
+  healthcare costs during hospitalisation were compared for pneumonia
+  patients with and without MRSA infection.
+
+  RESULTS: Of 450,317 inpatients with community-acquired pneumonia, 3102
+  patients with MRSA pneumonia were matched with 12,320 patients with non-
+  MRSA pneumonia. The MRSA pneumonia patients had higher mortality, longer
+  hospital stays and higher costs. Multivariable logistic regression
+  analysis revealed that MRSA pneumonia was significantly associated with
+  higher in-hospital mortality compared with non-MRSA pneumonia (adjusted
+  odds ratio = 1.94; 95% confidence interval: 1.72-2.18; p < 0.001).
+  Healthcare costs during hospitalisation were significantly higher for
+  patients with MRSA pneumonia than for those with non-MRSA pneumonia
+  (difference = USD 8502; 95% confidence interval: USD 7959-9045;
+  p < 0.001).
+
+  CONCLUSIONS: MRSA infection was associated with higher in-hospital
+  mortality and higher healthcare costs during hospitalisation, suggesting
+  that preventing MRSA pneumonia is essential.
+
+GRADE: ___
+
+
+--- 27 of 36  [q23] ---
+
+QUESTION
+  What is the optimal dosing schedule for vancomycin in MRSA bacteremia?
+
+DOCUMENT
+  In-hospital mortality associated with community-acquired pneumonia due to
+  methicillin-resistant Staphylococcus aureus: a matched-pair cohort study.
+
+  BACKGROUND: It remains unclear whether methicillin-resistant
+  Staphylococcus aureus (MRSA) pneumonia is associated with higher mortality
+  compared with non-MRSA pneumonia. This study's objective was to compare
+  outcomes including in-hospital mortality and healthcare costs during
+  hospitalisation between patients with MRSA pneumonia and those with non-
+  MRSA pneumonia.
+
+  METHODS: Using a national inpatient database in Japan, we conducted a 1:4
+  matched-pair cohort study of inpatients with community-acquired pneumonia
+  from 1 April 2012 to 31 March 2014. In-hospital outcomes (mortality,
+  length of stay and healthcare costs during hospitalisation) were compared
+  between patients with and without MRSA infection. We performed multiple
+  imputation using chained equations followed by multivariable regression
+  analyses fitted with generalised estimating equations to account for
+  clustering within matched pairs. All-cause in-hospital mortality and
+  healthcare costs during hospitalisation were compared for pneumonia
+  patients with and without MRSA infection.
+
+  RESULTS: Of 450,317 inpatients with community-acquired pneumonia, 3102
+  patients with MRSA pneumonia were matched with 12,320 patients with non-
+  MRSA pneumonia. The MRSA pneumonia patients had higher mortality, longer
+  hospital stays and higher costs. Multivariable logistic regression
+  analysis revealed that MRSA pneumonia was significantly associated with
+  higher in-hospital mortality compared with non-MRSA pneumonia (adjusted
+  odds ratio = 1.94; 95% confidence interval: 1.72-2.18; p < 0.001).
+  Healthcare costs during hospitalisation were significantly higher for
+  patients with MRSA pneumonia than for those with non-MRSA pneumonia
+  (difference = USD 8502; 95% confidence interval: USD 7959-9045;
+  p < 0.001).
+
+  CONCLUSIONS: MRSA infection was associated with higher in-hospital
+  mortality and higher healthcare costs during hospitalisation, suggesting
+  that preventing MRSA pneumonia is essential.
+
+GRADE: ___
+
+
+--- 28 of 36  [q02] ---
+
+QUESTION
+  Which hand hygiene interventions improve compliance in hospital settings?
+
+DOCUMENT
+  Hand Hygiene, an Update.
+
+  Hand hygiene by health care personnel is an important measure for
+  preventing health care-associated infections, but adherence rates and
+  technique remain suboptimal. Alcohol-based hand rubs are the preferred
+  method of hand hygiene in most clinical scenarios, are more effective and
+  better tolerated than handwashing, and their use has facilitated improved
+  adherence rates. Obtaining accurate estimates of hand hygiene adherence
+  rates using direct observations of personnel is challenging. Combining
+  automated hand hygiene monitoring systems with direct observations is a
+  promising strategy, and is likely to yield the best estimates of
+  adherence. Greater attention to hand hygiene technique is needed.
+
+GRADE: ___
+
+
+--- 29 of 36  [q05] ---
+
+QUESTION
+  How effective are discharge follow-up phone calls at reducing
+  readmissions?
+
+DOCUMENT
+  Continuity of care interventions for preventing hospital readmission of
+  older people with chronic diseases: A meta-analysis.
+
+  BACKGROUND: Hospital readmission after discharge is a frequent, burdensome
+  and costly event, particularly frequent in older people with multiple
+  chronic conditions. Few literature reviews have analysed studies of
+  continuity of care interventions to reduce readmissions of older
+  inpatients discharged home over the short and long term.
+
+  OBJECTIVE: To evaluate the effectiveness of continuity of care
+  interventions in older people with chronic diseases in reducing short and
+  long term hospital readmission after hospital discharge.
+
+  DESIGN: Meta-analysis of randomized controlled trials.
+
+  DATA SOURCES: A comprehensive literature search on the databases PubMed,
+  Medline, CINAHL and EMBASE was performed on 27 January 2019 with no
+  language and time limits.
+
+  REVIEW METHODS: RCTs on continuity of care interventions on older people
+  discharged from hospital having hospital readmission as outcome, were
+  included. Two reviewers independently screened the studies and assessed
+  methodological quality using the Cochrane Risk of Bias tool. Selected
+  outcome data were combined and pooled using a Mantel-Haenszel random-
+  effects model.
+
+  RESULTS: Thirty RCTs, representing 8920 patients were included. Results
+  were stratified by time of readmissions. At 1 month from discharge, the
+  continuity interventions were associated with lower readmission rates in
+  207/1595 patients in the experimental group (12.9%), versus 264/1645
+  patients in the control group (16%) (Relative Risk [RR], 0.84 [95% CI,
+  0.71-0.99]). From 1 to 3 months, readmission rates were lower in 325/1480
+  patients in the experimental group (21.9%), versus 455/1523 patients in
+  the control group (29.8%) (RR 0.74 [95% CI, 0.65-0.84]). A subgroup
+  analysis showed that this positive effect was stronger when the
+  interventions addressed all of the continuity dimensions. After 3 months
+  this impact became inconclusive with moderate/high statistical
+  heterogeneity.
+
+  CONCLUSIONS: Continuity of care interventions prevent short term hospital
+  readmission in older people with chronic diseases. However, there is
+  inconclusive evidence about the effectiveness of continuity interventions
+  aiming to reduce long term readmission, and it is suggested that stronger
+  focus on it is needed.
+
+GRADE: ___
+
+
+--- 30 of 36  [q16] ---
+
+QUESTION
+  What hospital and physician characteristics correlate with readmission
+  rates?
+
+DOCUMENT
+  Variation in 30-Day Readmission Rates from Inpatient Rehabilitation
+  Facilities to Acute Care Hospitals.
+
+  OBJECTIVES: To quantify the rate of readmission from inpatient
+  rehabilitation facilities (IRFs) to acute care hospitals (ACHs) during the
+  first 30 days of rehabilitation stay. To measure variation in 30-day
+  readmission rate across IRFs, and the extent that patient and facility
+  characteristics contribute to this variation.
+
+  DESIGN: Retrospective analysis of an administrative database.
+
+  SETTING AND PARTICIPANTS: Adult IRF discharges from 944 US IRFs captured
+  in the Uniform Data System for Medical Rehabilitation database between
+  October 1, 2015 and December 31, 2017.
+
+  METHODS: Multilevel logistic regression was used to calculate adjusted
+  rates of readmission within 30 days of IRF admission and examine variation
+  in IRF readmission rates, using patient and facility-level variables as
+  predictors.
+
+  RESULTS: There were a total of 104,303 ACH readmissions out of a total of
+  1,102,785 IRFs discharges. The range of 30-day readmission rates to ACHs
+  was 0.0%‒28.9% (mean = 8.7%, standard deviation = 4.4%). The adjusted
+  readmission rate variation narrowed to 2.8%‒17.5% (mean = 8.7%, standard
+  deviation = 1.8%). Twelve patient-level and 3 facility-level factors were
+  significantly associated with 30-day readmission from IRF to ACH. A total
+  of 82.4% of the variance in 30-day readmission rate was attributable to
+  the model predictors.
+
+  CONCLUSIONS AND IMPLICATIONS: Fifteen patient and facility factors were
+  significantly associated with 30-day readmission from IRF to ACH and
+  explained the majority of readmission variance. Most of these factors are
+  nonmodifiable from the IRF perspective. These findings highlight that
+  adjusting for these factors is important when comparing readmission rates
+  between IRFs.
+
+GRADE: ___
+
+
+--- 31 of 36  [q13] ---
+
+QUESTION
+  What do surveillance data show about CAUTI trends in acute care hospitals?
+
+DOCUMENT
+  Broad-spectrum and Watch antimicrobials are commonly used to treat
+  hospital-acquired infections in German acute care hospitals: results from
+  the 2022 national point prevalence survey.
+
+  BACKGROUND: Hospital-acquired infections (HI) and associated antimicrobial
+  use (AU) significantly contribute to antimicrobial resistance. We aimed to
+  analyse AU patterns for HI treatment in German acute care hospitals.
+
+  METHODS: We analysed data from the German 2022 point prevalence survey
+  (PPS) on AU and healthcare-associated infections, using the European
+  Centre for Disease Prevention and Control protocol across 252 hospitals.
+  Analyses focused on key infection prevention and control (IPC),
+  antimicrobial stewardship (AMS) indicators and AU for HI, categorised by
+  the World Health Organisation AWaRe classification. Comparisons were made
+  to the previous national PPS in 2016 and 2011.
+
+  RESULTS: A total of 22 422 antimicrobial prescriptions were recorded in 66
+  586 patients. HI treatment accounted for 20% of AU. Penicillins with beta-
+  lactamase inhibitors, carbapenems and third-generation cephalosporins
+  accounted for over 50% of AU for HI treatment. Watch antimicrobials
+  dominated HI treatment prescriptions, accounting for around 62% of use,
+  particularly in respiratory infections, while use of Access antimicrobials
+  was limited (24%). Skin and soft tissue as well as bone and joint
+  infections, respiratory infections, and urinary tract infections were the
+  most commonly treated HI. Over time, IPC indicators, such as alcohol-based
+  hand rub consumption and IPC staffing, improved significantly, yet AMS
+  staffing remained low and comprehensive hospital-wide post-prescription
+  reviews were limited to around a quarter of hospitals.
+
+  CONCLUSIONS: The findings underscore the importance of reducing HI to curb
+  the use of broad-spectrum antimicrobials in German hospitals. IPC should
+  be included in AMS strategies, alongside aspects like improving AMS
+  staffing and establishing post-prescription review programmes.
+
+GRADE: ___
+
+
+--- 32 of 36  [q05] ---
+
+QUESTION
+  How effective are discharge follow-up phone calls at reducing
+  readmissions?
+
+DOCUMENT
+  Implementing a Discharge Follow-up Phone Call Program Reduces Readmission
+  Rates in an Integrated Health System.
+
+  In this study, we sought to determine the effect of implementing a large-
+  scale discharge follow-up phone call program on hospital readmission
+  rates. Previous work has shown that patients with unaddressed concerns
+  during discharge have significantly higher rates of care complications and
+  hospital readmissions. This study is an observational quality improvement
+  project completed from April 17, 2020 to January 31, 2022 at 22 hospitals
+  in a large, integrated academic health system. A nurse-led scripted
+  discharge follow-up phone call program was implemented to contact all
+  patients discharged from inpatient care within 72 hours of discharge.
+  Readmission rates were tracked before and after project implementation.
+  Over a 21-month span, 137,515 phone calls were placed, and 57.92% of
+  patients were successfully contacted within 7 days of discharge. The 7-day
+  readmission rate for contacted patients was 2.91% compared with 4.73% for
+  noncontacted patients. The 30-day readmission rate for contacted patients
+  was 11.00% compared with 12.17% for noncontacted patients. We have found
+  that discharge follow-up phone calls targeting patients decreases risk of
+  readmission, which improves overall patient outcomes.
+
+GRADE: ___
+
+
+--- 33 of 36  [q20] ---
+
+QUESTION
+  Do financial penalties for readmissions produce sustained reductions?
+
+DOCUMENT
+  The Long-Term Effect of Financial Penalties on 30-Day Hospital Readmission
+  Rates.
+
+  BACKGROUND: Although the immediate effect of financial penalties imposed
+  by the Hospital Readmissions Reduction Program (HRRP) was a decrease in
+  30-day hospital readmission rates, the long-term effects are unclear. The
+  authors studied 30-day readmissions before and immediately after HRRP
+  penalties and during the most recent period before the COVID-19 pandemic
+  and examined whether readmission trends differed between penalized and
+  non-penalized hospitals.
+
+  METHODS: Centers for Medicare & Medicaid Services hospital archive data
+  and US Census Bureau data were used to analyze hospital characteristics,
+  including readmission penalty status, and hospital service area (HSA)
+  demographic information, respectively. These two datasets were matched by
+  HSA crosswalk files, available through the Dartmouth Atlas files. Using
+  data from 2005-2008 as baseline, the authors examined hospital readmission
+  trends before (2008-2011) and after penalties (during three periods:
+  2011-2014, 2014-2017, 2017-2019). Mixed linear models were used to examine
+  readmission trends through periods, and differences by hospital penalty
+  status without and with adjustment for hospital characteristics and HSA
+  demographic information.
+
+  RESULTS: For all hospitals combined, rates for 2008-2011 vs. 2011-2014
+  were as follows: pneumonia, 18.6% vs. 17.0%; heart failure (HF), 24.8% vs.
+  22.0%; acute myocardial infarction (AMI), 19.7% vs. 17.0% (p < 0.001 for
+  all three conditions). Rates for 2014-2017 vs. 2017-2019 were as follows:
+  pneumonia, 16.8% vs. 16.8% (p = 0.87), HF, 21.7% vs. 21.9% (p < 0.001);
+  AMI, 16.0% vs. 15.8% (p < 0.001). Compared to penalized hospitals, using
+  difference-in-differences, non-penalized hospitals had a significantly
+  greater increase for two conditions between the 2014-2017 and 2017-2019
+  periods: pneumonia 0.34%, p < 0.001; and HF 0.24%, p = 0.002.
+
+  CONCLUSION: Long-term readmission rates are lower than pre-HRRP rates,
+  with recent trends decreasing further for AMI, stabilizing for pneumonia,
+  and increasing for HF.
+
+GRADE: ___
+
+
+--- 34 of 36  [q09] ---
+
+QUESTION
+  What methodological challenges arise in selecting and defining stroke
+  quality indicators?
+
+DOCUMENT
+  Regional anaesthesia quality indicators for adult patients undergoing non-
+  cardiac surgery: a systematic review.
+
+  Improvement in healthcare delivery depends on the ability to measure
+  outcomes that can direct changes in the system. An overview of quality
+  indicators within the field of regional anaesthesia is lacking. This
+  systematic review aims to synthesise available quality indicators, as per
+  the Donabedian framework, and provide a concise overview of evidence-based
+  quality indicators within regional anaesthesia. A systematic literature
+  search was conducted using the databases MEDLINE, Embase, CINAHL and
+  Cochrane from 2003 to present, and a prespecified search of regional
+  anaesthesia society websites and healthcare quality agencies. The quality
+  indicators relevant to regional anaesthesia were subdivided into peri-
+  operative structure, process and outcome indicators as per the Donabedian
+  framework. The methodological quality of the indicators was determined as
+  per the Oxford Centre for Evidence-Based Medicine's framework. Twenty
+  manuscripts met our inclusion criteria and, in total, 68 unique quality
+  indicators were identified. There were 4 (6%) structure, 12 (18%) process
+  and 52 (76%) outcome indicators. Most of the indicators were related to
+  the safety (57%) and effectiveness (19%) of regional anaesthesia and were
+  general in nature (60%). In addition, most indicators (84%) were based on
+  low levels of evidence. Our study is an important first step towards
+  describing quality indicators for the provision of regional anaesthesia.
+  Future research should focus on the development of structure and process
+  quality indicators and improving the methodological quality and usability
+  of these indicators.
+
+GRADE: ___
+
+
+--- 35 of 36  [q07] ---
+
+QUESTION
+  What is the reported effect size of medication reconciliation on
+  readmission rates?
+
+DOCUMENT
+  A systematic review and meta-analysis of chronic obstructive pulmonary
+  disease in asia: risk factors for readmission and readmission rate.
+
+  BACKGROUND: Patients with chronic obstructive pulmonary disease (COPD)
+  often require hospital readmission because of exacerbation of their
+  condition. These frequent exacerbations reduce quality of life, work
+  performance, and emotional health. However, few studies have investigated
+  the risk factors for readmission and readmission rates in Asian patients
+  with COPD. We conducted a systematic review to identify and understand the
+  major risk factors for readmission in patients with COPD in Asia and the
+  readmission rate.
+
+  METHOD: We searched PubMed, MEDLINE, Embase, China National Knowledge
+  Infrastructure, Wanfang Data Knowledge Service Platform, and China
+  Biomedical Literature Database from database inception to September 2023
+  to identify studies on the readmission rate and risk factors for COPD in
+  Asian patients. Chinese search terms included "COPD," "chronic obstructive
+  pulmonary disease," "risk factors," "recurrence," "readmission," and
+  "acute exacerbation." English search terms included "chronic obstructive
+  pulmonary disease," "COPD," "lung emphysema," "hospital admission,"
+  "patient readmission," and "readmission." We extracted first author,
+  publication year, research area, sample size, sex, risk factors, and
+  readmission rates. The included studies' quality was evaluated using the
+  Agency of Healthcare Research and Quality. Meta-synthesis was conducted on
+  readmission rates and risk factors for readmission. Subgroups were formed
+  by age, research area, sample size, and research type, and meta-regression
+  analysis was conducted on the 30-day, 90-day, and 365-day readmission
+  rates of patients to determine the source of heterogeneity. Finally, the
+  results' robustness was evaluated using sensitivity analysis. Begg and
+  Egger tests were used to evaluate publication bias.
+
+  RESULTS: Meta-analysis of 44 studies, with 169,255 participants, indicated
+  that risk factors for COPD readmission in Asia included: history of
+  multiple hospital admissions, ≥ 3 comorbidities, male sex, ratio of
+  eosinophils percentage ≥ 2%, body mass index < 18.5, smoking history,
+  pulmonary heart disease comorbidity, COPD assessment test score > 20,
+  nutritional disorder, Neutrophil-to-Lymphocyte ratio > 7, and FEV1 < 50.
+  The 30-, 90-, and 365-day readmission rates of patients were 19%, 31%, and
+  42%, respectively.
+
+  CONCLUSIONS: Patients with COPD in Asia generally have high readmission
+  rates and different risk factors. To reduce healthcare, economic, and
+  social burdens, interventions should address major risk factors, early
+  prevention, and screening.
+
+GRADE: ___
+
+
+--- 36 of 36  [q08] ---
+
+QUESTION
+  What approaches improve patient safety in pediatric emergency care?
+
+DOCUMENT
+  The prevalence of incivility in hospitals and the effects of incivility on
+  patient safety culture and outcomes: A systematic review and meta-
+  analysis.
+
+  AIM: Workplace incivility is a barrier to safe and high-quality patient
+  care in nursing workplaces and more broadly in tertiary hospitals. The
+  present study aims to systematically review the existing evidence to
+  provide a comprehensive understanding of the prevalence of co-worker
+  incivility experienced and witnessed by nurses and other healthcare
+  professionals, the effects of incivility on patient safety culture (PSC)
+  and patient outcomes, and the factors which mediate the relationship
+  between incivility and patient safety.
+
+  METHODS: A systematic review with narrative synthesis and meta-analysis
+  was undertaken to synthesize the data from 41 studies.
+
+  DATA SOURCES: Databases searched included MEDLINE, PubMed, SCOPUS, CINAHL,
+  PsycInfo, ProQuest, Emcare and Embase. Searches were conducted on 17
+  August 2021 and repeated on 15 March 2023.
+
+  RESULTS: The pooled prevalence of experienced incivility was 25.0%. The
+  pooled prevalence of witnessed incivility was 30.1%. Workplace incivility
+  was negatively associated with the PSC domains of teamwork, reporting
+  patient safety events, organization learning/improvement, management
+  support for safety, leadership, communication openness and communication
+  about error. The composite pooled effect size of incivility on these
+  domains of PSC was OR = 0.590, 95% CI [0.515, 0.676]. Workplace incivility
+  was associated with a range of patient safety outcomes (PSOs) including
+  near misses, adverse events, reduced procedural and diagnostic
+  performance, medical error and mortality. State depletion, profession,
+  psychological responses to incivility, information sharing, help seeking,
+  workload and satisfaction with organizational communication were found to
+  mediate the relationship between incivility and patient safety.
+
+  CONCLUSION: Experienced and witnessed incivility is prevalent in tertiary
+  hospitals and has a deleterious effect on PSC and PSOs. A better
+  understanding of the mechanisms of this relationship will support the
+  development of interventions aimed at reducing both incivility and patient
+  harm.
+
+  IMPLICATIONS FOR THE PROFESSION AND/OR PATIENT CARE IMPACT: This study
+  quantifies the effect of incivility on PSC and outcomes. It provides
+  support that interventions focusing on incivility are a valuable mechanism
+  for improving patient care. It guides intervention design by highlighting
+  which domains of PSC are most associated with incivility. It explores the
+  profession-specific experiences of workplace incivility.
+
+  REPORTING METHOD: This report adheres to PRISMA reporting guidelines.
+
+  PATIENT OR PUBLIC CONTRIBUTION: No patient or public contribution. The
+  focus of this study is the nursing and healthcare workforce, therefore,
+  patient or public involvement not required.
+
+GRADE: ___
+
