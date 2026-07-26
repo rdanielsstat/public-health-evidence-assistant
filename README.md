@@ -381,6 +381,62 @@ fusion's independence assumption to hold; and cross-encoder reranking of the
 fused candidates recovers the top of the ranking, beating dense on grade-2
 Recall@5 and MRR, and is the intended retriever for the answer generation stage.
 
+### LLM evaluation
+
+Each of the five pipeline variants is scored on three dimensions by
+`evaluation/judge.py`, over the 24-question set:
+
+- **Groundedness** (LLM-judged, 0–2): are the answer's claims supported by the
+  retrieved evidence? Only meaningful when there is context, so it is scored for
+  the four retrieval variants and not for `no_retrieval`.
+- **Completeness** (LLM-judged, 0–2): does the answer address the question? The
+  judge is instructed to ignore formatting and sourcing and to score a
+  well-formatted thin answer below a plain thorough one.
+- **Citation validity** (mechanical, not judged): the fraction of cited PMIDs
+  that exist in the corpus. PMIDs are extracted with a regex and tested for
+  membership in the `documents` table.
+
+The judge is `gpt-4o` at temperature 0. Generation and judging both retry with
+exponential backoff on rate limits, and results are written per-record so an
+interrupted run resumes without re-spending.
+
+| variant       | n  | groundedness | completeness | citation_validity | answers w/ invalid cite |
+|---------------|----|--------------|--------------|-------------------|-------------------------|
+| no_retrieval  | 24 | n/a          | 2.000        | 0.000             | 24                      |
+| lexical_only  | 24 | 2.000        | 0.917        | 1.000             | 0                       |
+| dense_only    | 24 | 2.000        | 1.667        | 1.000             | 0                       |
+| hybrid_rrf    | 24 | 2.000        | 1.500        | 1.000             | 0                       |
+| hybrid_rerank | 24 | 1.958        | 1.750        | 1.000             | 0                       |
+
+Two dimensions carry decisive signal. **Groundedness is ~2.0 across every
+retrieval variant**: once any real corpus document is in context, the generator
+grounds its answer in it, and grounding is robust to which retriever supplied
+the context. **Citation validity separates cleanly**: every grounded variant
+cites only real corpus PMIDs (1.000), while `no_retrieval` fabricates its
+sources on all 24 questions (0.000). Spot-checking those fabricated identifiers
+found them resolving to real but unrelated PubMed papers — a failure that looks
+checkable and passes a casual glance, which is more dangerous than an invented
+number.
+
+This is why answer quality and citation validity are scored as separate
+dimensions and never combined. `no_retrieval` scores the *highest* completeness
+(2.000) while failing citation validity completely. A single blended quality
+score would therefore rank the variant that fabricates every source above the
+grounded pipeline.
+
+The completeness column should not be read as a ranking of retrievers. It is
+confounded in two ways. First, out-of-scope questions (e.g. q23, q24) invert the
+signal: the grounded pipeline correctly retrieves nothing and declines to
+answer, scoring completeness 0, while `no_retrieval` scores 2 for confidently
+answering a question it should refuse — so part of the baseline's completeness
+advantage is precisely its willingness to answer out of scope. Second, a single
+unreferenced completeness integer over 24 questions is a coarser instrument than
+the retrieval metrics (431 graded judgments); the ~0.25 spread among the four
+grounded variants is within its noise. Retriever quality is ranked by the
+retrieval metrics above, not by this column; the judge's role here is to
+evaluate generation, and its trustworthy result is about grounding and
+citation validity.
+
 ## Status
 
 Built and measured: PubMed corpus (646 documents, 5 topics), lexical and dense
