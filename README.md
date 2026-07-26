@@ -189,6 +189,32 @@ questions.
 The chunking layer is retained for policy and guidance documents (CDC, CMS),
 which are substantially longer and do require splitting.
 
+### Set up Langfuse (tracing)
+
+Langfuse self-hosts as part of the Docker stack, but its account and API keys
+live in its own database, which starts empty. You must create an account and
+generate keys before the app can send traces. This is a one-time step per fresh
+volume — if you ever run `docker compose down -v`, the Langfuse database is
+wiped and you repeat this.
+
+1. With the stack running, open http://localhost:3000.
+2. Sign up (any email and password; there is no mail server, so nothing is
+   sent or verified). Save the password.
+3. Create an organization and a project (e.g. `PHEA` / `phea-dev`).
+4. In the project settings, create an API key pair.
+5. Copy the keys into `.env`:
+
+`LANGFUSE_PUBLIC_KEY=pk-lf-...`
+`LANGFUSE_SECRET_KEY=sk-lf-...`
+`LANGFUSE_HOST=http://localhost:3000`
+
+
+6. Restart the app so it picks up the keys.
+
+The app degrades gracefully without these: queries still work and are logged to
+Postgres, only Langfuse tracing is skipped. A 401 "Unauthorized" on trace export
+means the keys are missing, wrong, or from a different project.
+
 ## Retrieval
 
 ### Lexical search
