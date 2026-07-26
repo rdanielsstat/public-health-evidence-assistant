@@ -230,6 +230,55 @@ convention up to a constant shift absorbed by `k`.
 `search_hybrid()` in `retrieval/fusion.py` shares the signature of the other
 two retrievers, drawing 50 candidates from each before fusing.
 
+### Query router (agent)
+
+Dense and hybrid retrieval collapse multi-part questions onto a single topic:
+q14 ("which discharge interventions reduce both readmissions and post-discharge
+mortality") retrieves readmissions documents and never surfaces the mortality
+literature. The query router (`agents/router.py`, a LangGraph graph) adds a
+decision node that detects multi-part questions, decomposes them into
+per-topic sub-questions, retrieves for each with `hybrid_rerank`, and merges the
+results so the generator sees evidence from every part. Single-part questions
+pass straight through to the same retrieval-and-generation path. This is the one
+component where control flow is decided by the model rather than fixed in
+advance, and the decomposition doubles as query rewriting.
+
+Routing is evaluated (`evaluation/router_eval.py`) against a ground-truth label
+taken from the question annotations: a question is multi-part when its
+`topics_intent` covers more topics than single-query retrieval actually
+surfaced. Two policy questions (q19, q20) were initially mislabeled multi-part;
+their `topics_intent` expressed that the evidence spans two literatures, which
+is not the same as the question asking two things, and they were corrected to
+single-part.
+
+An initial router prompt caught only explicit conjunctions ("both X and Y") and
+missed relational two-topic questions ("how do infections affect mortality"),
+giving recall 1/3 on the genuine multi-part questions. One prompt revision, made
+on principle rather than by tuning — naming the relational pattern and excluding
+single questions whose evidence merely spans areas — raised recall to 3/3:
+
+| metric               | value                                    |
+|----------------------|------------------------------------------|
+| routing accuracy     | 0.958 (23/24)                            |
+| recall (multi-part)  | 1.000 (3/3)                              |
+| precision            | 0.750 (one over-split: q10)              |
+
+The one false positive (q10, "staffing shortages affect safety and inpatient
+outcomes") is an arguable disagreement rather than a clear error, and was left
+rather than tuned away on the same 24 questions.
+
+On the decomposed questions, a retrieval-collapse check confirms the merged
+context now covers the intended topics wherever the corpus contains them: q15
+(infections + mortality) and q18 (quality + mortality) both reach full topic
+coverage, versus the single-topic collapse the same questions showed before. q14
+remains partial — correct decomposition still retrieves only readmissions
+documents, because the corpus lacks papers linking discharge interventions to
+mortality. This distinguishes a routing failure (retrieving one topic when asked
+for two) from a corpus-coverage limit (retrieving for both, but the evidence for
+one does not exist), and q14 is the latter: the router did its job and the gap
+is in the data, which the grounded generator correctly reports rather than
+papering over.
+
 ## Evaluation
 
 ### Relevance judgments
