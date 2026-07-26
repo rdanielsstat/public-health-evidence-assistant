@@ -4,9 +4,9 @@ A retrieval-augmented generation (RAG) and agent system that answers questions
 about inpatient healthcare quality and safety, grounded in peer-reviewed
 evidence, with every answer citing its source documents.
 
-The knowledge base is peer-reviewed PubMed literature. A second source — federal
-policy and guidance (CDC, CMS) — is planned and the ingestion and schema are
-built to accommodate it; see [Roadmap](#roadmap).
+The knowledge base is peer-reviewed PubMed literature (abstracts). A second 
+source — federal policy and guidance (CDC, CMS) — is planned and the ingestion 
+and schema are built to accommodate it; see [Roadmap](#roadmap).
 
 ## Problem
 
