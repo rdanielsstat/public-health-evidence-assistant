@@ -15,10 +15,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Dependencies first, for layer caching.
 COPY pyproject.toml uv.lock .python-version ./
 RUN uv sync --frozen --no-install-project --no-dev
 
+# All packages the app imports at runtime.
 COPY app/ ./app/
+COPY agents/ ./agents/
+COPY retrieval/ ./retrieval/
+COPY monitoring/ ./monitoring/
+COPY ingestion/ ./ingestion/
+COPY .streamlit/ ./.streamlit/
+
+# Pre-download the cross-encoder so the first query does not stall on a
+# 2.3GB model download inside the container. Cached into the image.
+ENV HF_HOME=/app/.cache/huggingface
+RUN python -c "from sentence_transformers import CrossEncoder; CrossEncoder('BAAI/bge-reranker-v2-m3')"
 
 EXPOSE 8501
 

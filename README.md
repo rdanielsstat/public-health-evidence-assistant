@@ -67,6 +67,15 @@ topics must retrieve from documents that arrived under different queries, and
 naive keyword search retrieves documents that share vocabulary rather than
 documents that answer the question.
 
+The pipeline uses dlt for ingestion and a Python transform for the raw→refined
+mapping, rather than dlt+dbt. The mapping is procedural upsert logic with custom
+merge semantics (topic union) over two target tables carrying a generated
+tsvector and a downstream vector column; a tested Python function expresses this
+more directly than a SQL modeling framework, which would add a second transform
+tool for a two-table mapping. dlt manages extraction, load state, schema
+versioning, and idempotent merge (visible as the `_dlt_*` tables and normalized
+child tables in the `raw` dataset).
+
 ### Query strategy
 
 Each topic is retrieved by a query that unions its MeSH term with
@@ -189,6 +198,33 @@ questions.
 The chunking layer is retained for policy and guidance documents (CDC, CMS),
 which are substantially longer and do require splitting.
 
+## Setup
+
+### Ingestion
+
+Ingestion is a dlt pipeline. dlt owns raw extraction, load, state, and schema
+(into a `raw` dataset); a Python transform maps raw rows into the `documents`
+and `chunks` tables (topic-union merge, title+abstract content).
+
+```bash
+uv run python -m ingestion.pipeline      # dlt load + transform (pinned corpus)
+uv run python -m ingestion.embed         # OpenAI embeddings for each chunk
+```
+
+The pipeline reads the pinned corpus snapshot at `data/pubmed.jsonl` by default,
+so ingestion is deterministic and reproduces the exact corpus the evaluation was
+built against. A live refresh from the PubMed E-utilities API is available for
+scheduled re-pulls:
+
+```bash
+uv run python -m ingestion.pipeline live
+```
+
+A live refresh changes the corpus and therefore requires re-running the
+evaluation; it is not used for routine setup. The same pinned/live contract will
+apply to the CMS/CDC policy corpus, so a scheduled refresh can re-pull every
+source uniformly while pinned mode keeps the evaluated corpus reproducible.
+
 ### Set up Langfuse (tracing)
 
 Langfuse self-hosts as part of the Docker stack, but its account and API keys
@@ -214,6 +250,23 @@ wiped and you repeat this.
 The app degrades gracefully without these: queries still work and are logged to
 Postgres, only Langfuse tracing is skipped. A 401 "Unauthorized" on trace export
 means the keys are missing, wrong, or from a different project.
+
+### Set up Langfuse (tracing)
+
+Langfuse self-hosts in the stack but starts with an empty database, so you
+create an account and keys before traces can flow. One-time per fresh volume.
+
+1. Open http://localhost:3000, sign up (any email/password; no mail server).
+2. Create an organization and project (e.g. `PHEA` / `phea-dev`).
+3. In project settings, create an API key pair.
+4. Put the keys in `.env`: `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`,
+   `LANGFUSE_HOST=http://localhost:3000`.
+5. Restart the app.
+
+Langfuse v3 needs both a web and a worker container; both are in the compose
+file. The MinIO `langfuse` bucket is created automatically by an init service.
+The app degrades gracefully without Langfuse: queries still work and log to
+Postgres, only tracing is skipped.
 
 ## Retrieval
 
@@ -511,6 +564,42 @@ grounded variants is within its noise. Retriever quality is ranked by the
 retrieval metrics above, not by this column; the judge's role here is to
 evaluate generation, and its trustworthy result is about grounding and
 citation validity.
+
+## Monitoring
+
+Two layers. The Streamlit app logs every query to Postgres (`query_log`) and
+records thumbs feedback (`feedback`). The Monitoring page (sidebar) renders six
+charts from those tables: queries over time, queries by mode, citation validity
+by mode (grounded modes ~1.0, no_retrieval ~0.0), feedback split, median latency
+by mode (the agent is slower: routing plus per-subquestion retrieval), and token
+usage over time. Separately, each query is traced to Langfuse (self-hosted),
+which also computes per-query model cost from token counts.
+
+## Interface
+
+A Streamlit app. The main page answers questions and renders each cited PMID as
+a PubMed link, so grounded citations are verifiable in one click. A sidebar
+selector switches between the agent (default) and any single pipeline variant,
+which makes the citation-validity contrast visible live: grounded modes resolve
+to real corpus papers, the no-retrieval baseline resolves to fabricated ones.
+Sessions are capped to bound API cost.
+
+## Containerization
+<!-- TODO: confirm the app runs inside the phea-app container (not just via
+uv run on host). Dockerfile.app currently copies only app/ but the app imports
+agents/retrieval/monitoring/ingestion and needs sentence-transformers. Update
+Dockerfile to install the project and copy all packages. -->
+
+## Reproducibility
+<!-- TODO: final pass. Verify clean-clone setup sequence end to end:
+docker compose up → schema.sql → pipeline → indexes.sql → embed → Langfuse
+account/keys → app. Note pinned corpus snapshot date. Pinned versions via
+uv.lock. -->
+
+## CDC/CMS policy corpus
+<!-- TODO: second knowledge source. dlt resource (pinned/live like PubMed),
+mapper into documents/chunks. Makes retrieval necessary rather than merely
+verifiable; makes q21 answerable. Re-run evaluation after adding. -->
 
 ## Status
 
