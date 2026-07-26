@@ -1,8 +1,12 @@
 # Public Health Evidence Assistant
 
 A retrieval-augmented generation (RAG) and agent system that answers questions
-about inpatient healthcare quality and safety using peer-reviewed evidence and
-federal policy documents.
+about inpatient healthcare quality and safety, grounded in peer-reviewed
+evidence, with every answer citing its source documents.
+
+The knowledge base is peer-reviewed PubMed literature. A second source — federal
+policy and guidance (CDC, CMS) — is planned and the ingestion and schema are
+built to accommodate it; see [Roadmap](#roadmap).
 
 ## Problem
 
@@ -20,18 +24,55 @@ how do they align with CMS penalty criteria?"* currently means searching
 PubMed, then separately searching CMS and AHRQ documentation, then reconciling
 the two by hand.
 
-This project builds a single interface over both, with citations back to source
-documents so answers can be verified.
+This project builds a single interface over the evidence base, with citations
+back to source documents so answers can be verified. The policy half is the
+planned second knowledge source that would make cross-source questions like the
+one above fully answerable; today the system answers the evidence half and is
+built to extend to policy.
 
 ### Example questions
 
 - What interventions reduce 30-day readmissions for heart failure patients?
 - Which infection prevention practices have the strongest evidence in ICU
   settings?
-- How do CMS readmission penalty criteria compare to what the literature
-  identifies as modifiable risk factors?
 - What are the strongest predictors of inpatient mortality after sepsis?
+- How do healthcare-associated infections affect hospital mortality rates?
 - Has evidence on hand hygiene compliance interventions changed since 2020?
+
+## Quick start
+
+Requires Docker and [uv](https://docs.astral.sh/uv/). Everything runs locally.
+
+```bash
+# 1. Copy and fill environment variables
+cp .env.example .env
+#    Set OPENAI_API_KEY. POSTGRES_* default to phea/phea/phea.
+#    Leave LANGFUSE_* blank for now; you fill them in step 5.
+
+# 2. Start the stack (Postgres, app, Langfuse web + worker, ClickHouse,
+#    MinIO, Redis, and the MinIO bucket-init)
+docker compose up -d
+
+# 3. Create the database schema
+docker compose exec -T postgres psql -U phea -d phea < ingestion/schema.sql
+
+# 4. Ingest the corpus (dlt load + transform), then embed, then build the
+#    vector index (HNSW builds from data present at creation time, so it is
+#    applied after embedding)
+uv run python -m ingestion.pipeline
+uv run python -m ingestion.embed
+docker compose exec -T postgres psql -U phea -d phea < ingestion/indexes.sql
+
+# 5. Set up Langfuse (one-time; see "Tracing" below), put the keys in .env,
+#    then restart the app
+docker compose up -d app
+
+# 6. Open the app
+open http://localhost:8501
+```
+
+Ingestion reads a pinned corpus snapshot (`data/pubmed.jsonl`), so step 4 is
+deterministic and reproduces the exact corpus the evaluation was built against.
 
 ## Knowledge base
 
@@ -56,25 +97,12 @@ These MeSH terms anchor the queries but are not used alone; see
 are filtered to English-language records with abstracts, published 2018 or
 later.
 
-**Policy and guidance documents** — federal guidance covering the same
-outcomes, including CDC healthcare-associated infection guidance and CMS
-quality program documentation.
-
 The five topics overlap conceptually. Readmissions, infections, and mortality
 are all quality indicators, and a substantive question usually touches more
 than one. This is what makes retrieval strategy matter: a question spanning two
 topics must retrieve from documents that arrived under different queries, and
 naive keyword search retrieves documents that share vocabulary rather than
 documents that answer the question.
-
-The pipeline uses dlt for ingestion and a Python transform for the raw→refined
-mapping, rather than dlt+dbt. The mapping is procedural upsert logic with custom
-merge semantics (topic union) over two target tables carrying a generated
-tsvector and a downstream vector column; a tested Python function expresses this
-more directly than a SQL modeling framework, which would add a second transform
-tool for a two-table mapping. dlt manages extraction, load state, schema
-versioning, and idempotent merge (visible as the `_dlt_*` tables and normalized
-child tables in the `raw` dataset).
 
 ### Query strategy
 
@@ -190,21 +218,20 @@ this corpus anyway.
 Titles are prepended to abstract text before embedding. Titles carry dense,
 query-like phrasing ("Implementing a Discharge Follow-up Phone Call Program
 Reduces Readmission Rates") that overlaps directly with how users phrase
-questions.
-
-> **TODO:** replace this rationale with measured results once the evaluation
-> set exists — title-prepended vs. abstract-only, compared on Recall@10.
+questions. This choice is a deliberate design decision rather than a measured
+one — title-prepended versus abstract-only was not separately ablated, since
+the corpus is small and every title is short, dense, and topical.
 
 The chunking layer is retained for policy and guidance documents (CDC, CMS),
 which are substantially longer and do require splitting.
 
-## Setup
+### Ingestion pipeline
 
-### Ingestion
-
-Ingestion is a dlt pipeline. dlt owns raw extraction, load, state, and schema
-(into a `raw` dataset); a Python transform maps raw rows into the `documents`
-and `chunks` tables (topic-union merge, title+abstract content).
+Ingestion is a [dlt](https://dlthub.com/) pipeline. dlt owns raw extraction,
+load, state, and schema (into a `raw` dataset); a Python transform maps raw rows
+into the `documents` and `chunks` tables (topic-union merge, title+abstract
+content). Embedding is a separate follow-on step, since it is an external paid
+API call rather than an extract step.
 
 ```bash
 uv run python -m ingestion.pipeline      # dlt load + transform (pinned corpus)
@@ -220,53 +247,22 @@ scheduled re-pulls:
 uv run python -m ingestion.pipeline live
 ```
 
-A live refresh changes the corpus and therefore requires re-running the
-evaluation; it is not used for routine setup. The same pinned/live contract will
-apply to the CMS/CDC policy corpus, so a scheduled refresh can re-pull every
+A live refresh from a relevance-ranked API returns a slightly different corpus
+each time, which would drift the corpus out of lockstep with the evaluation's
+relevance judgments; a live refresh therefore requires re-running the evaluation
+and is not used for routine setup. The same pinned/live contract is designed to
+apply to the planned policy corpus, so a scheduled refresh can re-pull every
 source uniformly while pinned mode keeps the evaluated corpus reproducible.
 
-### Set up Langfuse (tracing)
-
-Langfuse self-hosts as part of the Docker stack, but its account and API keys
-live in its own database, which starts empty. You must create an account and
-generate keys before the app can send traces. This is a one-time step per fresh
-volume — if you ever run `docker compose down -v`, the Langfuse database is
-wiped and you repeat this.
-
-1. With the stack running, open http://localhost:3000.
-2. Sign up (any email and password; there is no mail server, so nothing is
-   sent or verified). Save the password.
-3. Create an organization and a project (e.g. `PHEA` / `phea-dev`).
-4. In the project settings, create an API key pair.
-5. Copy the keys into `.env`:
-
-`LANGFUSE_PUBLIC_KEY=pk-lf-...`
-`LANGFUSE_SECRET_KEY=sk-lf-...`
-`LANGFUSE_HOST=http://localhost:3000`
-
-
-6. Restart the app so it picks up the keys.
-
-The app degrades gracefully without these: queries still work and are logged to
-Postgres, only Langfuse tracing is skipped. A 401 "Unauthorized" on trace export
-means the keys are missing, wrong, or from a different project.
-
-### Set up Langfuse (tracing)
-
-Langfuse self-hosts in the stack but starts with an empty database, so you
-create an account and keys before traces can flow. One-time per fresh volume.
-
-1. Open http://localhost:3000, sign up (any email/password; no mail server).
-2. Create an organization and project (e.g. `PHEA` / `phea-dev`).
-3. In project settings, create an API key pair.
-4. Put the keys in `.env`: `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`,
-   `LANGFUSE_HOST=http://localhost:3000`.
-5. Restart the app.
-
-Langfuse v3 needs both a web and a worker container; both are in the compose
-file. The MinIO `langfuse` bucket is created automatically by an init service.
-The app degrades gracefully without Langfuse: queries still work and log to
-Postgres, only tracing is skipped.
+**Design note.** The pipeline uses dlt for ingestion and a Python transform for
+the raw→refined mapping, rather than dlt + dbt. The mapping is procedural upsert
+logic with custom merge semantics (topic union) over two target tables carrying
+a generated tsvector and a downstream vector column; a tested Python function
+expresses this more directly than a SQL modeling framework, which would add a
+second transform tool for a two-table mapping. dlt manages extraction, load
+state, schema versioning, and idempotent merge — visible as the `_dlt_*` tables
+and the normalized child tables (`pubmed_raw__topics`, etc.) in the `raw`
+dataset.
 
 ## Retrieval
 
@@ -308,6 +304,14 @@ convention up to a constant shift absorbed by `k`.
 
 `search_hybrid()` in `retrieval/fusion.py` shares the signature of the other
 two retrievers, drawing 50 candidates from each before fusing.
+
+### Reranking
+
+Cross-encoder reranking (`retrieval/rerank.py`, `BAAI/bge-reranker-v2-m3`, run
+locally, no API) takes the top 30 hybrid RRF candidates and reorders them by
+scoring each (query, document) pair jointly, replacing the fusion score with a
+cross-encoder relevance score. See [Retrieval metrics](#retrieval-metrics) for
+the measured lift.
 
 ### Query router (agent)
 
@@ -402,42 +406,8 @@ Variants are scored on an identical question set:
 | `hybrid_rrf`    | reciprocal rank fusion over both             |
 | `hybrid_rerank` | RRF candidates reranked by cross-encoder     |
 
-### The no-retrieval baseline
-
-Most of this corpus predates current model training cutoffs, so a language
-model can produce a fluent answer to most of these questions without any
-retrieval at all. The baseline tests whether the retrieval pipeline adds value
-rather than assuming it does.
-
-On an initial spot check, the ungrounded baseline produced a *more
-comprehensive* answer than the grounded pipeline — seven intervention
-categories against four — and every clinical claim it made was broadly
-accurate. Its citations were another matter. All seven PMIDs it supplied were
-checked against PubMed:
-
-| PMID     | Cited as                                      | Actually                                          |
-| -------- | --------------------------------------------- | ------------------------------------------------- |
-| 19414673 | Structured education programs, Jaarsma et al. | Phase II immunotoxin trial in hairy cell leukemia |
-| 19139356 | Transitional care review, Jack et al.         | Does not resolve                                  |
-| 18467729 | Home health interventions, McAlister et al.   | Doxorubicin in pediatric hepatoblastoma           |
-| 18467729 | Multidisciplinary care, Coleman et al.        | Same paper, cited twice under two attributions    |
-| 26700000 | Medication reconciliation, Weir et al.        | Rac1 signalling in rat inflammatory pain          |
-| 24685312 | Structured follow-up care, Hesselink et al.   | Gaucher disease cohort in South Florida           |
-| 28167973 | Telehealth meta-analysis, Kitsiou et al.      | Caffeic acid and head/neck carcinoma cells        |
-
-Zero of seven were correct. Six were valid PubMed identifiers pointing at
-unrelated papers — a more dangerous failure than an invented number, since the
-citation looks checkable and resolves to a real record. One identifier does not
-exist at all. One paper was cited twice under two different author
-attributions.
-
-Answer quality and citation validity are therefore scored as separate
-dimensions. A single quality score would rank the ungrounded baseline higher on
-this question despite its sourcing being entirely fabricated.
-
-Citation validity is checked mechanically rather than by an LLM judge: PMIDs
-are extracted from the answer and tested for membership in the `documents`
-table. Only groundedness and completeness require a judge.
+The deployed system uses the query router (agent), which wraps `hybrid_rerank`
+with multi-part decomposition.
 
 ### Retrieval metrics
 
@@ -468,11 +438,6 @@ is that on this corpus it does not improve over the strongest single retriever.
 A stronger lexical ranker (BM25 via a Postgres extension such as
 VectorChord-BM25) would narrow the quality gap and is the natural next step if
 hybrid is to be made competitive; it is noted as future work rather than built.
-
-Cross-encoder reranking (`retrieval/rerank.py`, BAAI/bge-reranker-v2-m3, run
-locally) takes the top 30 hybrid RRF candidates and reorders them by scoring
-each (query, document) pair jointly, replacing the fusion score with a
-cross-encoder relevance score. Registered in the harness as `hybrid_rerank`.
 
 Grade-2 relevance (highly relevant documents only, 21 in-scope questions):
 
@@ -507,9 +472,15 @@ Taken together: dense is a strong single-retriever baseline; equal-weight RRF
 underperforms it because the two retrievers are too unequal in quality for rank
 fusion's independence assumption to hold; and cross-encoder reranking of the
 fused candidates recovers the top of the ranking, beating dense on grade-2
-Recall@5 and MRR, and is the intended retriever for the answer generation stage.
+Recall@5 and MRR. `hybrid_rerank` is the retriever the answer generator uses
+(via the query router).
 
 ### LLM evaluation
+
+Most of this corpus predates current model training cutoffs, so a language
+model can produce a fluent answer to many of these questions without any
+retrieval at all. The `no_retrieval` baseline tests whether the retrieval
+pipeline adds value rather than assuming it does.
 
 Each of the five pipeline variants is scored on three dimensions by
 `evaluation/judge.py`, over the 24-question set:
@@ -544,7 +515,11 @@ cites only real corpus PMIDs (1.000), while `no_retrieval` fabricates its
 sources on all 24 questions (0.000). Spot-checking those fabricated identifiers
 found them resolving to real but unrelated PubMed papers — a failure that looks
 checkable and passes a casual glance, which is more dangerous than an invented
-number.
+number. (An early spot check on the heart-failure readmissions question found
+all seven cited PMIDs wrong: six valid identifiers pointing at unrelated papers
+— an immunotoxin trial, a pediatric hepatoblastoma study, a paper on Rac1
+signalling in rat inflammatory pain — and one that does not resolve, with one
+paper cited twice under two different author attributions.)
 
 This is why answer quality and citation validity are scored as separate
 dimensions and never combined. `no_retrieval` scores the *highest* completeness
@@ -565,50 +540,122 @@ retrieval metrics above, not by this column; the judge's role here is to
 evaluate generation, and its trustworthy result is about grounding and
 citation validity.
 
-## Monitoring
-
-Two layers. The Streamlit app logs every query to Postgres (`query_log`) and
-records thumbs feedback (`feedback`). The Monitoring page (sidebar) renders six
-charts from those tables: queries over time, queries by mode, citation validity
-by mode (grounded modes ~1.0, no_retrieval ~0.0), feedback split, median latency
-by mode (the agent is slower: routing plus per-subquestion retrieval), and token
-usage over time. Separately, each query is traced to Langfuse (self-hosted),
-which also computes per-query model cost from token counts.
-
 ## Interface
 
-A Streamlit app. The main page answers questions and renders each cited PMID as
-a PubMed link, so grounded citations are verifiable in one click. A sidebar
-selector switches between the agent (default) and any single pipeline variant,
-which makes the citation-validity contrast visible live: grounded modes resolve
-to real corpus papers, the no-retrieval baseline resolves to fabricated ones.
-Sessions are capped to bound API cost.
+A [Streamlit](https://streamlit.io/) app (`app/main.py`). The main page answers
+questions and renders each cited PMID as a PubMed link, so grounded citations
+are verifiable in one click. A sidebar selector switches between the agent
+(default) and any single pipeline variant, which makes the citation-validity
+contrast visible live: grounded modes resolve to real corpus papers, the
+no-retrieval baseline resolves to fabricated ones. Sessions are capped to bound
+API cost.
 
-## Containerization
-<!-- TODO: confirm the app runs inside the phea-app container (not just via
-uv run on host). Dockerfile.app currently copies only app/ but the app imports
-agents/retrieval/monitoring/ingestion and needs sentence-transformers. Update
-Dockerfile to install the project and copy all packages. -->
+## Monitoring
+
+Two layers.
+
+**In-app dashboard.** The app logs every query to Postgres (`query_log`) and
+records thumbs feedback (`feedback`). The Monitoring page (sidebar) renders six
+charts from those tables: queries over time, queries by mode, citation validity
+by mode (grounded modes ~1.0, `no_retrieval` ~0.0), feedback split, median
+latency by mode (the agent is slower — routing plus per-subquestion retrieval),
+and token usage over time.
+
+**Tracing.** Each query is traced to self-hosted Langfuse (`v3`), which records
+input, output, latency, and per-query model cost computed from token counts.
+
+## Deployment
+
+Everything is defined in `docker-compose.yaml` and runs locally. Services:
+
+| Service              | Role                                                |
+| -------------------- | --------------------------------------------------- |
+| `postgres`           | pgvector — documents, chunks, embeddings, logs      |
+| `app`                | Streamlit interface + monitoring dashboard          |
+| `langfuse`           | Langfuse web (UI + ingestion API)                   |
+| `langfuse-worker`    | Langfuse worker (processes traces into ClickHouse)  |
+| `langfuse-clickhouse`| trace analytics store                               |
+| `langfuse-minio`     | S3-compatible blob storage for traces               |
+| `langfuse-minio-init`| one-shot: creates the MinIO bucket on first start   |
+| `langfuse-redis`     | queue + cache                                       |
+| `langfuse-db`        | Langfuse's own Postgres (separate from the app DB)  |
+
+The app container installs the project's dependencies from the pinned
+`uv.lock`, copies all runtime packages (`app`, `agents`, `retrieval`,
+`monitoring`, `ingestion`), and pre-downloads the cross-encoder model at build
+time so the first query does not stall on a model download.
+
+### Tracing (Langfuse) — one-time setup
+
+Langfuse self-hosts in the stack but starts with an empty database, so you
+create an account and keys before traces can flow. This is one-time per fresh
+volume; if you run `docker compose down -v`, the Langfuse database is wiped and
+you repeat it.
+
+1. Open http://localhost:3000 and sign up (any email/password; there is no mail
+   server, so nothing is sent or verified). Save the password.
+2. Create an organization and project (e.g. `PHEA` / `phea-dev`).
+3. In project settings, create an API key pair.
+4. Put the keys in `.env`:
+   ```
+   LANGFUSE_PUBLIC_KEY=pk-lf-...
+   LANGFUSE_SECRET_KEY=sk-lf-...
+   LANGFUSE_HOST=http://localhost:3000
+   ```
+5. Restart the app: `docker compose up -d app`.
+
+Langfuse v3 requires both the `langfuse` (web) and `langfuse-worker` containers;
+both are in the compose file. The MinIO bucket is created automatically by the
+`langfuse-minio-init` service. The app degrades gracefully without Langfuse:
+queries still work and log to Postgres, only tracing is skipped. A 401 on trace
+export means the keys are missing, wrong, or from a different project.
 
 ## Reproducibility
-<!-- TODO: final pass. Verify clean-clone setup sequence end to end:
-docker compose up → schema.sql → pipeline → indexes.sql → embed → Langfuse
-account/keys → app. Note pinned corpus snapshot date. Pinned versions via
-uv.lock. -->
 
-## CDC/CMS policy corpus
-<!-- TODO: second knowledge source. dlt resource (pinned/live like PubMed),
-mapper into documents/chunks. Makes retrieval necessary rather than merely
-verifiable; makes q21 answerable. Re-run evaluation after adding. -->
+- **Pinned dependencies.** All Python dependencies are pinned in `uv.lock`; the
+  app image installs with `uv sync --frozen`.
+- **Pinned corpus.** Ingestion loads the frozen snapshot `data/pubmed.jsonl`, so
+  the corpus is deterministic and matches the corpus the evaluation was built
+  against. The snapshot was fetched from PubMed in the range 2018–2026; a live
+  re-pull is available but drifts the corpus and requires re-running evaluation.
+- **Deterministic evaluation inputs.** `evaluation/questions.yaml` (24
+  questions) and `evaluation/qrels.jsonl` (431 graded judgments) are checked in,
+  so retrieval and LLM evaluation reproduce without re-grading.
+- **Full setup sequence** is in [Quick start](#quick-start); the one manual step
+  that cannot be scripted is the Langfuse account/key creation, documented above.
 
-## Status
+## Roadmap
 
-Built and measured: PubMed corpus (646 documents, 5 topics), lexical and dense
-retrieval, HNSW index, RRF hybrid fusion, cross-encoder reranking, the 24-question
-evaluation set with 431 graded relevance judgments and grader calibration, and
-the retrieval metrics harness. Retrieval findings are documented above.
+- **CDC/CMS policy corpus** — the planned second knowledge source. It is added
+  as a second dlt resource (with the same pinned/live modes as PubMed) and a
+  mapper into the shared `documents`/`chunks` schema. It would make cross-source
+  questions (evidence + policy) answerable and make retrieval necessary rather
+  than merely verifiable on some questions. Evaluation is re-run after it lands.
+- **Weighted or BM25-backed hybrid** — the measured finding is that equal-weight
+  RRF underperforms dense here because the two retrievers are too unequal. A
+  stronger lexical ranker (BM25 via a Postgres extension) or dense-weighted
+  fusion is the path to making hybrid competitive.
+- **Scheduled ingestion** — the pinned/live pipeline design supports periodic
+  re-pulls of every source via an orchestrator (e.g. Kestra/Airflow), paired
+  with an evaluation re-run.
 
-In progress: answer generation with LLM-as-judge scoring (groundedness,
-completeness, citation validity), the Streamlit interface, dlt ingestion pipeline,
-Langfuse tracing, and the monitoring dashboard. A CDC/CMS policy corpus is planned
-as a second knowledge source.
+## Repository layout
+
+```
+app/            Streamlit interface (main.py) + pages/ (monitoring dashboard)
+agents/         generation (generate.py) and the query router (router.py)
+retrieval/      search.py (lexical, dense), fusion.py (RRF), rerank.py
+ingestion/      pipeline.py (dlt), embed.py, schema.sql, indexes.sql
+evaluation/     questions.yaml, qrels.jsonl, retrieval_metrics.py, judge.py,
+                router_eval.py, build_qrels.py
+monitoring/     store.py (query + feedback persistence and dashboard reads)
+docker/         Dockerfile.app, Dockerfile.ingestion
+data/           pubmed.jsonl (pinned corpus snapshot)
+```
+
+## Stack
+
+Python 3.12, uv, Docker Compose, Postgres 16 + pgvector, dlt, OpenAI
+(`text-embedding-3-small`, `gpt-4o`, `gpt-4o-mini`),
+`BAAI/bge-reranker-v2-m3` (local), LangGraph, Streamlit, Langfuse v3
+(self-hosted with ClickHouse, MinIO, Redis).
