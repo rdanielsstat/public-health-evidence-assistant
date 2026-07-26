@@ -107,22 +107,29 @@ def generate(
     mode: str = "hybrid_rerank",
     k: int = DEFAULT_TOP_K,
     topic: str | None = None,
+    contexts: list[Hit] | None = None,
 ) -> GenerationResult:
     """Answer a question under one retrieval mode.
 
     For retrieval modes, the top-k documents are retrieved and passed to the
     model as grounding context. For no_retrieval, the model answers from
     parametric knowledge with no context.
+
+    If `contexts` is supplied, retrieval is skipped and the given documents are
+    used as-is. This lets a caller that controls retrieval itself (e.g. the
+    query router, which retrieves per sub-question and merges) reuse this exact
+    grounded generation path. `contexts` is ignored for no_retrieval.
     """
     if mode not in MODES:
         raise ValueError(f"unknown mode {mode!r}; expected one of {MODES}")
 
-    contexts: list[Hit] = []
     if mode == "no_retrieval":
+        contexts = []
         system = SYSTEM_UNGROUNDED
         user = question
     else:
-        contexts = RETRIEVERS[mode](question, k=k, topic=topic)
+        if contexts is None:
+            contexts = RETRIEVERS[mode](question, k=k, topic=topic)
         system = SYSTEM_GROUNDED
         if contexts:
             user = f"Question: {question}\n\nEvidence documents:\n\n{_format_context(contexts)}"

@@ -216,13 +216,19 @@
   question: What has been the measured impact of the Hospital Readmissions Reduction Program?
   category: policy
   topics: [readmissions]
-  topics_intent: [readmissions, quality]
+  note: >
+    topics_intent removed: this policy question draws on both the readmissions
+    and quality-improvement literatures, but it is a single question, not a
+    multi-part one. "Evidence spans two topics" is not the same as "the question
+    asks two things," and only the latter is a decomposition signal.
 
 - id: q20
   question: Do financial penalties for readmissions produce sustained reductions?
   category: policy
   topics: [readmissions]
-  topics_intent: [readmissions, quality]
+  note: >
+    topics_intent removed for the same reason as q19: single policy question,
+    not multi-part. Retained as single-part ground truth for router evaluation.
 
 - id: q21
   question: Do current quality measures accurately reflect the quality of care delivered?
