@@ -341,6 +341,54 @@ A stronger lexical ranker (BM25 via a Postgres extension such as
 VectorChord-BM25) would narrow the quality gap and is the natural next step if
 hybrid is to be made competitive; it is noted as future work rather than built.
 
+Cross-encoder reranking (`retrieval/rerank.py`, BAAI/bge-reranker-v2-m3, run
+locally) takes the top 30 hybrid RRF candidates and reorders them by scoring
+each (query, document) pair jointly, replacing the fusion score with a
+cross-encoder relevance score. Registered in the harness as `hybrid_rerank`.
+
+Grade-2 relevance (highly relevant documents only, 21 in-scope questions):
+
+| retriever     | recall@5 | recall@10 | mrr   | ndcg@10 | judged_cov |
+|---------------|----------|-----------|-------|---------|------------|
+| lexical       | 0.359    | 0.463     | 0.552 | 0.509   | 1.000      |
+| dense         | 0.625    | 0.829     | 0.804 | 0.832   | 0.995      |
+| hybrid_rrf    | 0.501    | 0.770     | 0.695 | 0.711   | 0.833      |
+| hybrid_rerank | 0.724    | 0.851     | 0.933 | 0.770   | 0.695      |
+
+Reranking is where fusion pays off. On highly relevant documents it beats dense
+on the two metrics a reranker exists to improve: Recall@5 (0.724 vs 0.625, more
+grade-2 documents in the top 5) and MRR (0.933 vs 0.804, the first grade-2
+document sits almost at rank 1). Dense retains a small edge on NDCG@10
+(0.832 vs 0.770) and ties on Recall@10. This split is the expected
+cross-encoder signature: the reranker sharpens the head of the ranking rather
+than the whole list, since it only reorders the 30 candidates hybrid supplies
+and inherits hybrid's weaker tail below rank 5. For a generator that reads the
+top few documents, Recall@5 and MRR are the operative metrics, and reranking
+wins both.
+
+These figures are a lower bound. `hybrid_rerank` has the lowest judged coverage
+of any method (0.695), meaning roughly a third of what it ranks was never in the
+pooled judgment set and is scored as non-relevant by default. The reranker
+promotes documents the two first-stage retrievers ranked too low to enter the
+pool, some of which are likely relevant but ungraded, so its true performance is
+at least this good. This is a limitation of pool-based evaluation, not of the
+method: the pool was built from first-stage top-10 results and cannot fully
+credit a reranker that reaches beyond it.
+
+Taken together: dense is a strong single-retriever baseline; equal-weight RRF
+underperforms it because the two retrievers are too unequal in quality for rank
+fusion's independence assumption to hold; and cross-encoder reranking of the
+fused candidates recovers the top of the ranking, beating dense on grade-2
+Recall@5 and MRR, and is the intended retriever for the answer generation stage.
+
 ## Status
 
-Under development.
+Built and measured: PubMed corpus (646 documents, 5 topics), lexical and dense
+retrieval, HNSW index, RRF hybrid fusion, cross-encoder reranking, the 24-question
+evaluation set with 431 graded relevance judgments and grader calibration, and
+the retrieval metrics harness. Retrieval findings are documented above.
+
+In progress: answer generation with LLM-as-judge scoring (groundedness,
+completeness, citation validity), the Streamlit interface, dlt ingestion pipeline,
+Langfuse tracing, and the monitoring dashboard. A CDC/CMS policy corpus is planned
+as a second knowledge source.

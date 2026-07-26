@@ -22,6 +22,7 @@ import yaml
 
 from retrieval.fusion import search_hybrid
 from retrieval.search import Hit, search_dense, search_lexical
+from retrieval.rerank import search_hybrid_rerank
 
 QUESTIONS_PATH = Path(__file__).parent / "questions.yaml"
 QRELS_PATH = Path(__file__).parent / "qrels.jsonl"
@@ -32,6 +33,7 @@ RETRIEVERS: dict[str, Retriever] = {
     "lexical": search_lexical,
     "dense": search_dense,
     "hybrid_rrf": search_hybrid,
+    "hybrid_rerank": search_hybrid_rerank,
 }
 
 
