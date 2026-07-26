@@ -53,8 +53,12 @@ cp .env.example .env
 #    MinIO, Redis, and the MinIO bucket-init)
 docker compose up -d
 
-# 3. Create the database schema
+# 3. Wait for Postgres to finish first-boot init (it creates the pgvector and
+#    pg_trgm extensions on first start), then create the schemas. The schema
+#    step needs the vector extension, so don't run it before Postgres is ready.
+until docker compose exec -T postgres pg_isready -U phea -d phea; do sleep 1; done
 docker compose exec -T postgres psql -U phea -d phea < ingestion/schema.sql
+docker compose exec -T postgres psql -U phea -d phea < ingestion/feedback_schema.sql
 
 # 4. Ingest the corpus (dlt load + transform), then embed, then build the
 #    vector index (HNSW builds from data present at creation time, so it is
