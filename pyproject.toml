@@ -5,7 +5,7 @@ description = "Evidence-based RAG assistant for public health and health policy 
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "dlt>=1.29.0",
+    "dlt[postgres]>=1.29.0",
     "httpx>=0.28.1",
     "langchain-core>=1.5.0",
     "langchain-openai>=1.4.0",

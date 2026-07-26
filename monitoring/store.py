@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from ingestion.load import connect
 
+import pandas as pd
 
 def log_query(
     session_id: str,
@@ -72,3 +73,48 @@ def record_feedback(query_id: int, session_id: str, rating: int) -> None:
     with connect() as conn, conn.cursor() as cur:
         cur.execute(sql, {"query_id": query_id, "session_id": session_id, "rating": rating})
         conn.commit()
+
+
+def _df(sql: str, params: dict | None = None) -> pd.DataFrame:
+    """Run a query and return a DataFrame, built from a cursor rather than
+    pd.read_sql (which expects a SQLAlchemy connection and misbehaves with a
+    raw psycopg3 connection)."""
+    with connect() as conn, conn.cursor() as cur:
+        cur.execute(sql, params or {})
+        rows = cur.fetchall()
+        if not rows:
+            columns = [desc[0] for desc in cur.description] if cur.description else []
+            return pd.DataFrame(columns=columns)
+        if isinstance(rows[0], dict):
+            return pd.DataFrame(rows)
+        columns = [desc[0] for desc in cur.description]
+        return pd.DataFrame(rows, columns=columns)
+ 
+ 
+def load_query_log() -> pd.DataFrame:
+    """All logged queries, most recent first, with a citation_validity column."""
+    return _df(
+        """
+        SELECT
+            id, session_id, question, mode, multipart,
+            answer, context_pmids, n_cited, n_valid_cited,
+            prompt_tokens, completion_tokens, latency_ms, created_at,
+            CASE WHEN n_cited > 0
+                 THEN n_valid_cited::float / n_cited
+                 ELSE NULL END AS citation_validity
+        FROM query_log
+        ORDER BY created_at DESC
+        """
+    )
+ 
+ 
+def load_feedback() -> pd.DataFrame:
+    """All feedback rows joined to their query's mode."""
+    return _df(
+        """
+        SELECT f.id, f.query_id, f.rating, f.created_at, q.mode, q.question
+        FROM feedback f
+        JOIN query_log q ON q.id = f.query_id
+        ORDER BY f.created_at DESC
+        """
+    )
