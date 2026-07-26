@@ -51,7 +51,7 @@ services:
     restart: unless-stopped
 
   langfuse-minio:
-    image: minio/minio:RELEASE.2025-04-08T15-41-24Z
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z-cpuv1
     container_name: phea-minio
     command: server /data --console-address ":9001"
     environment:
@@ -67,7 +67,7 @@ services:
     restart: unless-stopped
 
   langfuse-minio-init:
-    image: minio/mc:RELEASE.2025-04-08T15-41-24Z
+    image: minio/mc:RELEASE.2025-08-13T08-35-41Z-cpuv1
     container_name: phea-minio-init
     depends_on:
       langfuse-minio:
