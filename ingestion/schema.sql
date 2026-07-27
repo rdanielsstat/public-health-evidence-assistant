@@ -15,6 +15,7 @@ CREATE TABLE documents (
     mesh_terms TEXT[] DEFAULT '{}',
     publication_types TEXT[] DEFAULT '{}',
     indexing_method TEXT,
+    doc_type TEXT NOT NULL DEFAULT 'literature',
     fetched_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -40,3 +41,4 @@ CREATE INDEX documents_topics_idx ON documents USING GIN (topics);
 CREATE INDEX documents_mesh_idx ON documents USING GIN (mesh_terms);
 CREATE INDEX documents_year_idx ON documents (published_year);
 CREATE INDEX documents_source_idx ON documents (source);
+CREATE INDEX documents_doc_type_idx ON documents (doc_type);

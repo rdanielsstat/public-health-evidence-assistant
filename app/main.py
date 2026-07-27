@@ -32,6 +32,7 @@ load_dotenv()
 
 SESSION_QUERY_CAP = 20
 PMID_RE = re.compile(r"\[pmid:\s*(\d+)\]", re.IGNORECASE)
+CMS_RE = re.compile(r"\[cms:\s*([a-z0-9-]+)\]", re.IGNORECASE)
 
 # Optional Langfuse tracing. Absent keys degrade gracefully to no tracing.
 try:
@@ -53,15 +54,43 @@ def corpus_pmids() -> set[str]:
         return {(r["doc_id"] if isinstance(r, dict) else r[0]) for r in cur.fetchall()}
 
 
-def linkify_citations(answer_text: str, valid: set[str]) -> str:
-    """Turn [PMID:12345] into a markdown link, marking any PMID not in corpus."""
-    def repl(m: re.Match) -> str:
+@st.cache_data(show_spinner=False)
+def corpus_cms() -> dict[str, str]:
+    """Map of CMS id (doc_id without the 'cms-' prefix) -> landing page url, for
+    validating and linking CMS policy citations."""
+    from ingestion.load import connect
+    out: dict[str, str] = {}
+    with connect() as conn, conn.cursor() as cur:
+        cur.execute("SELECT doc_id, url FROM documents WHERE source = 'cms'")
+        for r in cur.fetchall():
+            doc_id = r["doc_id"] if isinstance(r, dict) else r[0]
+            url = r["url"] if isinstance(r, dict) else r[1]
+            cms_id = doc_id[4:] if doc_id.startswith("cms-") else doc_id
+            out[cms_id] = url or f"https://data.cms.gov/provider-data/dataset/{cms_id}"
+    return out
+
+
+def linkify_citations(answer_text: str, valid: set[str],
+                      cms_urls: dict[str, str] | None = None) -> str:
+    """Turn [PMID:12345] and [CMS:<id>] into markdown links, marking any that are
+    not in the corpus."""
+    cms_urls = cms_urls or {}
+
+    def repl_pmid(m: re.Match) -> str:
         pmid = m.group(1)
         url = f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/"
         if pmid in valid:
             return f"[[PMID:{pmid}]]({url})"
         return f"[[PMID:{pmid} — not in corpus]]({url})"
-    return PMID_RE.sub(repl, answer_text)
+
+    def repl_cms(m: re.Match) -> str:
+        cms_id = m.group(1)
+        if cms_id in cms_urls:
+            return f"[[CMS:{cms_id}]]({cms_urls[cms_id]})"
+        return f"[CMS:{cms_id} — not in corpus]"
+
+    linked = PMID_RE.sub(repl_pmid, answer_text)
+    return CMS_RE.sub(repl_cms, linked)
 
 
 # ---------------------------------------------------------------- session state
@@ -81,7 +110,17 @@ def init_state() -> None:
 
 def run_query(question: str, mode: str) -> dict:
     valid = corpus_pmids()
+    cms_urls = corpus_cms()
     t0 = time.time()
+
+    def _count_cited(text: str) -> tuple[int, int]:
+        """Count all citations (PMID + CMS) and how many resolve to the corpus."""
+        pmids = PMID_RE.findall(text)
+        cms_ids = CMS_RE.findall(text)
+        n_cited = len(pmids) + len(cms_ids)
+        n_valid = (sum(1 for p in pmids if p in valid)
+                   + sum(1 for c in cms_ids if c in cms_urls))
+        return n_cited, n_valid
 
     def _do_work():
         if mode == "agent_router":
@@ -94,13 +133,11 @@ def run_query(question: str, mode: str) -> dict:
             name="query", input={"question": question, "mode": mode}
         ) as obs:
             gen, multipart, subquestions = _do_work()
-            cited = PMID_RE.findall(gen.answer)
-            n_valid = sum(1 for p in cited if p in valid)
-            obs.update(output={"answer": gen.answer, "n_cited": len(cited), "n_valid": n_valid})
+            n_cited, n_valid = _count_cited(gen.answer)
+            obs.update(output={"answer": gen.answer, "n_cited": n_cited, "n_valid": n_valid})
     else:
         gen, multipart, subquestions = _do_work()
-        cited = PMID_RE.findall(gen.answer)
-        n_valid = sum(1 for p in cited if p in valid)
+        n_cited, n_valid = _count_cited(gen.answer)
 
     latency_ms = int((time.time() - t0) * 1000)
 
@@ -110,7 +147,7 @@ def run_query(question: str, mode: str) -> dict:
         mode=mode,
         answer=gen.answer,
         context_pmids=gen.context_pmids,
-        n_cited=len(cited),
+        n_cited=n_cited,
         n_valid_cited=n_valid,
         prompt_tokens=gen.prompt_tokens,
         completion_tokens=gen.completion_tokens,
@@ -125,9 +162,9 @@ def run_query(question: str, mode: str) -> dict:
         "question": question,
         "mode": mode,
         "answer": gen.answer,
-        "answer_linked": linkify_citations(gen.answer, valid),
+        "answer_linked": linkify_citations(gen.answer, valid, cms_urls),
         "context_pmids": gen.context_pmids,
-        "n_cited": len(cited),
+        "n_cited": n_cited,
         "n_valid": n_valid,
         "multipart": multipart,
         "subquestions": subquestions,

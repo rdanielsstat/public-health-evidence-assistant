@@ -49,12 +49,14 @@ MODES = ["no_retrieval", *RETRIEVERS.keys()]
 
 SYSTEM_GROUNDED = """You are a public health evidence assistant. Answer the \
 question using only the provided evidence documents. Each document is labelled \
-with its PMID.
+with either a PMID (peer-reviewed literature) or a CMS id (policy/regulatory).
 
 Rules:
 - Base every factual claim on the provided documents. Do not use outside knowledge.
-- Cite the source of each claim inline as [PMID:<pmid>], using the PMID given \
-in the document label. Cite only PMIDs that appear in the provided documents.
+- Cite the source of each claim inline using the label shown on the document: \
+[PMID:<pmid>] for literature, [CMS:<id>] for policy documents. Use exactly the \
+identifier given in the document label, and cite only documents that appear in \
+the provided evidence.
 - If the documents do not contain enough information to answer, say so plainly \
 rather than filling the gap from general knowledge.
 - Be concise and specific. Do not pad the answer."""
@@ -78,11 +80,18 @@ class GenerationResult:
 
 
 def _format_context(hits: list[Hit]) -> str:
-    """Render retrieved documents into a labelled block for the prompt."""
+    """Render retrieved documents into a labelled block for the prompt. Policy
+    documents (source='cms') are labelled [CMS:<id>] so the model cites them
+    with a CMS marker; literature is labelled [PMID:<pmid>]."""
     blocks = []
     for h in hits:
         title = h.title or ""
-        blocks.append(f"[PMID:{h.doc_id}] {title}\n{h.content}")
+        if h.source == "cms":
+            cms_id = h.doc_id[4:] if h.doc_id.startswith("cms-") else h.doc_id
+            label = f"[CMS:{cms_id}]"
+        else:
+            label = f"[PMID:{h.doc_id}]"
+        blocks.append(f"{label} {title}\n{h.content}")
     return "\n\n---\n\n".join(blocks)
 
 

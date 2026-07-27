@@ -36,12 +36,15 @@ from dlt.sources.credentials import ConnectionStringCredentials
 from dotenv import load_dotenv
 
 from ingestion.fetch_pubmed import collect
+from ingestion.fetch_cms import collect as collect_cms
 from ingestion.load import build_content, connect
+from ingestion.chunking import split_text
 
 from pathlib import Path
 import json
 
 PUBMED_SNAPSHOT = Path("data/pubmed.jsonl")
+CMS_SNAPSHOT = Path("data/cms.jsonl")
 
 load_dotenv()
 
@@ -113,13 +116,50 @@ def pubmed_raw(source_mode: str = "pinned"):
             yield {**rec, "topic": topic}
 
 
+@dlt.resource(
+    name="cms_raw",
+    write_disposition="merge",
+    primary_key=("doc_id", "topic"),
+)
+def cms_raw(source_mode: str = "pinned"):
+    """CMS Provider Data Catalog program/measure descriptions, one row per
+    (doc_id, topic). Same pinned/live contract as pubmed_raw:
+
+      - "pinned": read the frozen snapshot at data/cms.jsonl (default).
+      - "live": fetch fresh from the CMS metastore via collect_cms().
+
+    CMS descriptions carry source='cms' and doc_type='policy' so retrieval and
+    evaluation can distinguish policy from peer-reviewed literature.
+    """
+    if source_mode == "live":
+        records = collect_cms()
+    elif source_mode == "pinned":
+        if not CMS_SNAPSHOT.exists():
+            raise FileNotFoundError(
+                f"{CMS_SNAPSHOT} not found. This is the pinned CMS policy "
+                "snapshot. Run `uv run python -m ingestion.fetch_cms` to create "
+                "it, or restore the file."
+            )
+        records = (json.loads(line) for line in CMS_SNAPSHOT.open() if line.strip())
+    else:
+        raise ValueError(f"unknown source_mode {source_mode!r}; expected 'pinned' or 'live'")
+
+    for rec in records:
+        topics = rec.get("topics") or []
+        if not topics:
+            yield {**rec, "topic": None}
+            continue
+        for topic in topics:
+            yield {**rec, "topic": topic}
+
+
 # ---------------------------------------------------------------- transform
 
 
-def _fetch_raw_documents(dataset: str) -> dict[str, dict]:
-    """Read the raw pubmed table and collapse to one record per doc_id, with
-    topics unioned across the (doc_id, topic) rows dlt loaded."""
-    table = f"{dataset}.pubmed_raw"
+def _fetch_raw_documents(dataset: str, table_name: str = "pubmed_raw") -> dict[str, dict]:
+    """Read a raw table and collapse to one record per doc_id, with topics
+    unioned across the (doc_id, topic) rows dlt loaded."""
+    table = f"{dataset}.{table_name}"
     by_doc: dict[str, dict] = {}
     with connect() as conn, conn.cursor() as cur:
         cur.execute(f"SELECT * FROM {table}")  # noqa: S608 - dataset is internal, not user input
@@ -142,12 +182,12 @@ def _fetch_raw_documents(dataset: str) -> dict[str, dict]:
 UPSERT_DOC = """
 INSERT INTO documents (
     doc_id, source, topics, title, abstract, journal, doi, url,
-    published_year, mesh_terms, publication_types, indexing_method
+    published_year, mesh_terms, publication_types, indexing_method, doc_type
 )
 VALUES (
     %(doc_id)s, %(source)s, %(topics)s, %(title)s, %(abstract)s,
     %(journal)s, %(doi)s, %(url)s, %(published_year)s,
-    %(mesh_terms)s, %(publication_types)s, %(indexing_method)s
+    %(mesh_terms)s, %(publication_types)s, %(indexing_method)s, %(doc_type)s
 )
 ON CONFLICT (doc_id) DO UPDATE SET
     topics            = EXCLUDED.topics,
@@ -159,7 +199,8 @@ ON CONFLICT (doc_id) DO UPDATE SET
     published_year    = EXCLUDED.published_year,
     mesh_terms        = EXCLUDED.mesh_terms,
     publication_types = EXCLUDED.publication_types,
-    indexing_method   = EXCLUDED.indexing_method
+    indexing_method   = EXCLUDED.indexing_method,
+    doc_type          = EXCLUDED.doc_type
 """
 
 UPSERT_CHUNK = """
@@ -186,6 +227,7 @@ def _doc_params(rec: dict) -> dict:
         "mesh_terms": rec.get("mesh_terms", []),
         "publication_types": rec.get("publication_types", []),
         "indexing_method": rec.get("indexing_method"),
+        "doc_type": rec.get("doc_type", "literature"),
     }
 
 
@@ -213,6 +255,31 @@ def transform_to_documents(dataset: str = RAW_DATASET) -> tuple[int, int]:
     return n_docs, n_chunks
 
 
+def transform_cms_to_documents(dataset: str = RAW_DATASET) -> tuple[int, int]:
+    """Map dlt's raw CMS rows into documents + chunks. Unlike PubMed (one chunk
+    per doc), CMS policy descriptions are split into multiple chunks via
+    split_text when long enough, so retrieval returns a focused passage rather
+    than a whole program description. Returns (n_docs, n_chunks)."""
+    by_doc = _fetch_raw_documents(dataset, table_name="cms_raw")
+    n_docs = n_chunks = 0
+    with connect() as conn, conn.cursor() as cur:
+        for rec in by_doc.values():
+            rec.setdefault("doc_type", "policy")
+            cur.execute(UPSERT_DOC, _doc_params(rec))
+            n_docs += 1
+            # Chunk the title+abstract content. split_text returns one chunk for
+            # short text and several for long descriptions.
+            content = build_content(rec)
+            for idx, chunk in enumerate(split_text(content)):
+                cur.execute(
+                    UPSERT_CHUNK,
+                    {"doc_id": rec["doc_id"], "chunk_index": idx, "content": chunk},
+                )
+                n_chunks += 1
+        conn.commit()
+    return n_docs, n_chunks
+
+
 # ---------------------------------------------------------------- entrypoint
 
 
@@ -223,14 +290,23 @@ def run(source_mode: str = "pinned") -> None:
         dataset_name=RAW_DATASET,
     )
 
-    log.info("extracting + loading raw via dlt (source_mode=%s)", source_mode)
+    log.info("extracting + loading pubmed raw via dlt (source_mode=%s)", source_mode)
     load_info = pipeline.run(pubmed_raw(source_mode=source_mode))
-    log.info("dlt load: %s", load_info)
+    log.info("dlt load (pubmed): %s", load_info)
 
-    log.info("transforming raw -> documents/chunks")
+    log.info("extracting + loading cms raw via dlt (source_mode=%s)", source_mode)
+    cms_load_info = pipeline.run(cms_raw(source_mode=source_mode))
+    log.info("dlt load (cms): %s", cms_load_info)
+
+    log.info("transforming pubmed raw -> documents/chunks")
     n_docs, n_chunks = transform_to_documents(RAW_DATASET)
-    log.info("documents upserted: %d", n_docs)
-    log.info("chunks upserted: %d", n_chunks)
+    log.info("pubmed documents upserted: %d", n_docs)
+    log.info("pubmed chunks upserted: %d", n_chunks)
+
+    log.info("transforming cms raw -> documents/chunks")
+    n_docs_cms, n_chunks_cms = transform_cms_to_documents(RAW_DATASET)
+    log.info("cms documents upserted: %d", n_docs_cms)
+    log.info("cms chunks upserted: %d", n_chunks_cms)
 
     with connect() as conn, conn.cursor() as cur:
         cur.execute("SELECT count(*) AS n FROM documents")

@@ -36,6 +36,7 @@ class Hit:
     topics: list[str]
     published_year: int | None
     url: str | None
+    source: str | None = None
 
 
 def embed_query(text: str) -> list[float]:
@@ -52,7 +53,8 @@ SELECT_FIELDS = """
     c.content      AS content,
     d.topics       AS topics,
     d.published_year AS published_year,
-    d.url          AS url
+    d.url          AS url,
+    d.source       AS source
 """
 
 def to_or_tsquery(text: str) -> str:
