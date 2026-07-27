@@ -1,34 +1,38 @@
-# Public Health Evidence Assistant
+# Healthcare Quality & Safety Evidence Assistant
 
 A retrieval-augmented generation (RAG) and agent system that answers questions
-about inpatient healthcare quality and safety, grounded in peer-reviewed
-evidence, with every answer citing its source documents.
+about hospital quality and safety, drawing on peer-reviewed research and federal
+measure data. When an answer draws on a retrieved document, it includes a
+citation and a link back to the source so the answer can be verified.
 
-The knowledge base is peer-reviewed PubMed literature (abstracts). A second 
-source — federal policy and guidance (CDC, CMS) — is planned and the ingestion 
-and schema are built to accommodate it; see [Roadmap](#roadmap).
+The knowledge base combines two sources:
+
+- **Peer-reviewed PubMed literature** (titles and abstracts) on quality, safety,
+  readmissions, infections, and inpatient mortality.
+- **CMS Provider Data Catalog** dataset descriptions covering federal quality
+  and safety measures and programs, such as the Hospital Readmissions Reduction
+  Program, the Hospital-Acquired Condition Reduction Program, and Hospital
+  Value-Based Purchasing.
 
 ## Problem
 
 Clinicians, hospital quality teams, and health policy analysts need to answer
-questions that span two bodies of knowledge that live in different places and
-speak different languages:
+questions that span different bodies of knowledge living in different places:
 
 - **What does the evidence say?** Peer-reviewed studies on which interventions
   reduce readmissions, infections, and inpatient mortality.
-- **What does policy require?** Federal programs such as the CMS Hospital
-  Readmissions Reduction Program that tie reimbursement to these same outcomes.
+- **How does CMS measure and track it?** Federal programs and measures, such as
+  the Hospital Readmissions Reduction Program, that score hospitals on these
+  same outcomes and tie them to reimbursement.
 
 Answering a question like *"what interventions reduce 30-day readmissions, and
-how do they align with CMS penalty criteria?"* currently means searching
-PubMed, then separately searching CMS and AHRQ documentation, then reconciling
+how does CMS measure hospital performance on them?"* currently means searching
+PubMed, then separately browsing the CMS Provider Data Catalog, then reconciling
 the two by hand.
 
-This project builds a single interface over the evidence base, with citations
-back to source documents so answers can be verified. The policy half is the
-planned second knowledge source that would make cross-source questions like the
-one above fully answerable; today the system answers the evidence half and is
-built to extend to policy.
+This project builds a single interface over both sources. When an answer relies
+on a retrieved document, it cites that document and links back to it, so answers
+can be verified against the evidence.
 
 ### Example questions
 
