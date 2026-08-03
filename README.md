@@ -79,8 +79,9 @@ docker compose up -d app
 open http://localhost:8501
 ```
 
-Ingestion reads a pinned corpus snapshot (`data/pubmed.jsonl`), so step 4 is
-deterministic and reproduces the exact corpus the evaluation was built against.
+Ingestion reads pinned corpus snapshots (`data/pubmed.jsonl` and
+`data/cms.jsonl`), so step 4 is deterministic and reproduces the exact corpus
+the evaluation was built against.
 
 ## Knowledge base
 
@@ -246,10 +247,10 @@ uv run python -m ingestion.pipeline      # dlt load + transform (pinned corpus)
 uv run python -m ingestion.embed         # OpenAI embeddings for each chunk
 ```
 
-The pipeline reads the pinned corpus snapshot at `data/pubmed.jsonl` by default,
-so ingestion is deterministic and reproduces the exact corpus the evaluation was
-built against. A live refresh from the PubMed E-utilities API is available for
-scheduled re-pulls:
+The pipeline reads the pinned corpus snapshots at `data/pubmed.jsonl` and
+`data/cms.jsonl` by default, so ingestion is deterministic and reproduces the
+exact corpus the evaluation was built against. A live refresh from the PubMed
+E-utilities API is available for scheduled re-pulls:
 
 ```bash
 uv run python -m ingestion.pipeline live
@@ -371,6 +372,11 @@ is in the data, which the grounded generator correctly reports rather than
 papering over.
 
 ## Evaluation
+
+> **Note on corpus version.** The evaluation below was built and run against the
+> PubMed-only corpus (646 documents). The CMS source described above is a later
+> addition. The reported figures therefore characterize the PubMed retrieval
+> pipeline, which is unchanged by the CMS addition.
 
 ### Relevance judgments
 
@@ -634,11 +640,6 @@ export means the keys are missing, wrong, or from a different project.
 
 ## Roadmap
 
-- **CDC/CMS policy corpus** — the planned second knowledge source. It is added
-  as a second dlt resource (with the same pinned/live modes as PubMed) and a
-  mapper into the shared `documents`/`chunks` schema. It would make cross-source
-  questions (evidence + policy) answerable and make retrieval necessary rather
-  than merely verifiable on some questions. Evaluation is re-run after it lands.
 - **Weighted or BM25-backed hybrid** — the measured finding is that equal-weight
   RRF underperforms dense here because the two retrievers are too unequal. A
   stronger lexical ranker (BM25 via a Postgres extension) or dense-weighted
@@ -658,7 +659,7 @@ evaluation/     questions.yaml, qrels.jsonl, retrieval_metrics.py, judge.py,
                 router_eval.py, build_qrels.py
 monitoring/     store.py (query + feedback persistence and dashboard reads)
 docker/         Dockerfile.app, Dockerfile.ingestion
-data/           pubmed.jsonl (pinned corpus snapshot)
+data/           pubmed.jsonl, cms.jsonl (pinned corpus snapshots)
 ```
 
 ## Stack
